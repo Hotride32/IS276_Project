@@ -1,0 +1,17 @@
+game.o: game.c ../include/gf2d_graphics.h ../gfc/include/gfc_types.h \
+ ../gfc/include/gfc_vector.h ../gfc/include/gfc_types.h \
+ ../include/gf2d_sprite.h ../gfc/include/gfc_text.h \
+ ../gfc/include/gfc_color.h ../gfc/include/gfc_vector.h \
+ ../gfc/simple_logger/include/simple_logger.h
+gf2d_draw.o: gf2d_draw.c ../include/gf2d_draw.h \
+ ../gfc/include/gfc_vector.h ../gfc/include/gfc_types.h \
+ ../include/gf2d_graphics.h ../gfc/include/gfc_types.h \
+ ../gfc/simple_logger/include/simple_logger.h
+gf2d_graphics.o: gf2d_graphics.c ../include/gf2d_graphics.h \
+ ../gfc/include/gfc_types.h ../gfc/include/gfc_vector.h \
+ ../gfc/include/gfc_types.h ../gfc/simple_logger/include/simple_logger.h
+gf2d_sprite.o: gf2d_sprite.c ../gfc/simple_logger/include/simple_logger.h \
+ ../gfc/include/gfc_text.h ../gfc/include/gfc_types.h \
+ ../gfc/include/gfc_color.h ../gfc/include/gfc_vector.h \
+ ../include/gf2d_graphics.h ../gfc/include/gfc_types.h \
+ ../gfc/include/gfc_vector.h ../include/gf2d_sprite.h
