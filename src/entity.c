@@ -49,7 +49,7 @@ void entity_update(Entity *self)
     // DO ANY GENERIC UPDATE CODE
     vector2d_add(self->position,self->position,self->velocity);
     self->frame += self->frameRate;
-    if (self->frame >= self->frameCount)self->frame = 0;
+    if (self->frame >= self->frameCount)self->frame = self->frameAnimStart;
     // IF THERE IS A CUSTOM UPDATE, DO THAT NOW
     if (self->update)self->update(self);
 }
@@ -139,7 +139,7 @@ void entity_draw(Entity *ent)
             NULL,
             NULL,
             &ent->rotation,
-            NULL,
+            &ent->flip,
             NULL,
             (Uint32)ent->frame);
     }

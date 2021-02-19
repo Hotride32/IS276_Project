@@ -10,11 +10,13 @@ typedef struct Entity_s
     Bool       _inuse;
     Vector2D    position;
     Vector2D    velocity;
+    Vector2D    flip;
     Vector3D    rotation; //(x,y) = rotation center, z = degrees of rotation
     Sprite     *sprite; 
     float       frame;
     float       frameRate;
     int         frameCount;
+    int         frameAnimStart;
     void      (*update)(struct Entity_s *self);
     void      (*think)(struct Entity_s *self);
     void      (*draw)(struct Entity_s *self);

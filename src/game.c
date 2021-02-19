@@ -45,7 +45,7 @@ int main(int argc, char * argv[])
     /*demo setup*/
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     level = level_load("levels/exampleLevel.json");
-    player_spawn(vector2d(100,100));
+    player_spawn(vector2d(100,435));
     /*main game loop*/
     while(!done)
     {
