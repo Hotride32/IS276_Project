@@ -2,8 +2,12 @@
 
 #include "simple_json.h"
 #include "simple_logger.h"
-
+#include "camera.h"
 #include "level.h"
+#include "entity.h"
+
+
+static Level gamelevel = { 0 };
 
 
 Level *level_new()
@@ -114,6 +118,25 @@ Level *level_load(const char *filename)
     slog("map width: %i",level->levelWidth);
     slog("map height: %i",level->levelHeight);
     
+    gamelevel.space = gf2d_space_new_full(
+        3,
+        gf2d_rect(0, 0, 1200, 700),
+        0.1,
+        vector2d(0, 0.1),
+        1,
+        1);
+
+    Vector2D offset, drawPosition;
+    offset = camera_get_offset();
+    for (i = 0; i < level->tileCount; i++)
+    {
+        if (level->tileMap[i] == 0)continue;
+        drawPosition.x = ((i % level->levelWidth) * level->tileSet->frame_w);
+        drawPosition.y = ((i / level->levelWidth) * level->tileSet->frame_h);
+        drawPosition.x += offset.x;
+        drawPosition.y += offset.y;
+        gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h));
+    }
     sj_free(json);
     return level;
 }
@@ -136,6 +159,7 @@ void level_free(Level *level)
 void level_draw(Level *level)
 {
     int i;
+    Vector2D offset, drawPosition;
     if (!level)
     {
         slog("cannot draw level, NULL pointer provided");
@@ -150,22 +174,91 @@ void level_draw(Level *level)
         slog("not tiles loaded for the level, cannot draw it");
         return;
     }
-
+    offset = camera_get_offset();
     for (i = 0; i < level->tileCount; i++)
     {
         if (level->tileMap[i] == 0)continue;
+        drawPosition.x = ((i % level->levelWidth) * level->tileSet->frame_w);
+        drawPosition.y = ((i / level->levelWidth) * level->tileSet->frame_h);
+        if (!camera_rect_on_screen(gfc_sdl_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h)))
+        {
+            //tile is off camera, skip
+            continue;
+        }
+        drawPosition.x += offset.x;
+        drawPosition.y += offset.y;
         gf2d_sprite_draw(
             level->tileSet,
-            vector2d((i % level->levelWidth)*level->tileSet->frame_w,(i / level->levelWidth)*level->tileSet->frame_h),
+            drawPosition,
             NULL,
             NULL,
             NULL,
             NULL,
             NULL,
             level->tileMap[i] - 1);
+        //gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h));
+        if (gamelevel.space)gf2d_space_draw(gamelevel.space, vector2d(0,0));
     }
 }
 
+void level_update()
+{
+    gf2d_entity_pre_sync_all();
+    gf2d_space_update(gamelevel.space);
+    gf2d_entity_post_sync_all();
+    
+    //gf2d_particle_emitter_update(gamelevel.pe);
+}
+
+int body_body_touch(Body* self, List* collisionList)
+{
+    Entity* selfEnt;
+    Collision* c;
+    int i, count;
+    if (!self)return 0;
+    selfEnt = (Entity*)self->data;
+    if (!selfEnt->touch)return 0;
+    count = gfc_list_get_count(collisionList);
+    for (i = 0; i < count; i++)
+    {
+        c = (Collision*)gfc_list_get_nth(collisionList, i);
+        if (!c)continue;
+        if (!c->body)continue;
+        if (!c->body->data)continue;
+        selfEnt->touch(selfEnt, (Entity*)c->body->data);
+    }
+    return 0;
+}
+
+void level_remove_entity(Entity* ent)
+{
+    if (!ent)return;
+    if (!gamelevel.space)
+    {//nothing to do
+        return;
+    }
+    gf2d_space_remove_body(gamelevel.space, &ent->body);
+}
+
+void level_add_entity(Entity* ent)
+{
+    if (!ent)return;
+    if (!gamelevel.space)
+    {
+        //slog("cannot add entity %s to level, no space defined!", ent->name);
+        return;
+    }
+    if (ent->body.touch == NULL)
+    {
+        ent->body.touch = body_body_touch;
+    }
+    gf2d_space_add_body(gamelevel.space, &ent->body);
+}
+
+Space* level_get_space()
+{
+    return gamelevel.space;
+}
 
 
 /*file footer*/
