@@ -18,6 +18,7 @@ typedef struct
 {
     Sprite     *bgImage;     /**<the background image for the level*/
     Sprite     *tileSet;     /**<sprite for the tileset*/
+    Vector2D    levelSize;   /**<how large, in pixels, the level is*/
     TileTypes  *tileMap;     /**<the tiles for the level*/
     Uint32      tileCount;
     Uint32      levelWidth;  /**<how many tiles per row the level has*/
@@ -35,6 +36,7 @@ typedef struct
  */
 Level *level_new();
 
+Level level_get();
 
 /**
  * @brief load a level from a json file

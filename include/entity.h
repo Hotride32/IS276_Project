@@ -35,6 +35,7 @@ typedef struct Entity_s
     int   attack;                           /**<which attack is being performed*/
     int   count;                            /**<useful for counting things like ammo count or health ammount*/
     float jumpcool;
+    float projectcool;
     int   jumpcount;                        /**<used for multijump*/
     int   grounded;
     void       *data;
@@ -51,6 +52,11 @@ void entity_manager_init(Uint32 max_entities);
  */
 void entity_manager_update_entities();
 
+
+/**
+ * @brief call think function for all entities
+ */
+void entity_manager_think_entities();
 
 /**
  * @brief call draw on all entities
@@ -80,5 +86,18 @@ void entity_free(Entity *ent);
  * @param ent the entity to draw
  */
 void entity_draw(Entity *ent);
+
+/**
+ * @brief adjust position of entity to redice clipping static shapes of the world
+ * @param self the entity to adjust
+ */
+void entity_world_snap(Entity* self);
+
+/**
+ * @brief adjust velcity according to gravity/ test for grounded status
+ * @param self the entity to adjust
+ */
+void entity_apply_gravity(Entity* self);
+
 
 #endif

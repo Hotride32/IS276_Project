@@ -6,7 +6,7 @@
 
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
-
+#include "camera.h"
 #include "entity.h"
 #include "player.h"
 #include "level.h"
@@ -44,7 +44,7 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
-    camera_set_dimensions(vector2d(1200, 7200));
+    camera_set_dimensions(vector2d(1200, 720));
     camera_set_position(vector2d(0, 0));
     gf2d_sprite_init(1024);
     entity_manager_init(100);
@@ -52,19 +52,22 @@ int main(int argc, char * argv[])
     
     SDL_ShowCursor(SDL_DISABLE);
 
-    space = gf2d_space_new_full(
+    /*space = gf2d_space_new_full(
         3,
         gf2d_rect(0,0,1200,700),
         0.1,
         vector2d(0,0.1),
         1,
-        1);
+        1);*/
     
     /*demo setup*/
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     level = level_load("levels/exampleLevel.json");
     Entity* player = player_spawn(vector2d(100,435));
+    Entity* ramp = ramp_spawn(vector2d(224, 450));
     level_add_entity(player);
+    //level_add_entity(ramp);
+
     /*
 
     shape[1] = gf2d_shape_circle(0, 0, 10);
@@ -112,15 +115,13 @@ int main(int argc, char * argv[])
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
         
+        entity_manager_think_entities();
         entity_manager_update_entities();
         
-        level_update();
-        //gf2d_entity_pre_sync_all();
-        //gf2d_entity_post_sync_all();
+        //camera_set_position(player->position);
 
-        gf2d_space_update(space);
-
-        collision = gf2d_collision_trace_space(space, vector2d(mx, my), vector2d(600, 360), filter);
+        level_update(level);
+        
 
 
         gf2d_graphics_clear_screen();// clears drawing buffers
@@ -130,7 +131,7 @@ int main(int argc, char * argv[])
             
             
             
-            gf2d_space_draw(space, vector2d(0, 0));
+            //gf2d_space_draw(space, vector2d(0, 0));
             /*if (collision.collided)
             {
                 gf2d_draw_line(vector2d(mx, my), collision.pointOfContact, vector4d(255, 0, 0, 255));

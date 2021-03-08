@@ -1,6 +1,10 @@
 #include "simple_logger.h"
 
 #include "player.h"
+#include "camera.h"
+#include "dagger.h"
+#include "level.h"
+#include "gf2d_particles.h"
 
 static Entity* _player = NULL;
 
@@ -9,6 +13,7 @@ void player_attack_light(Entity* self);
 void player_attack_light2(Entity* self);
 void player_attack_heavy(Entity* self);
 void player_attack_slide(Entity* self);
+void player_think(Entity* self);
 
 Entity* player_get()
 {
@@ -34,6 +39,7 @@ Entity *player_spawn(Vector2D position)
     ent->frameRate = 0.1;
     ent->frameCount = 6;
     ent->update = player_update;
+    ent->think = player_think;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
     ent->shape = gf2d_shape_rect(16, 5, 30, 40);
@@ -41,7 +47,7 @@ Entity *player_spawn(Vector2D position)
         &ent->body,
         "player",
         1,
-        WORLD_LAYER,
+        PLAYER_LAYER,
         0,
         1,
         position,
@@ -60,39 +66,80 @@ Entity *player_spawn(Vector2D position)
 
 void player_update(Entity *self)
 {
-    //Vector2D aimdir;
-    //float angle;
-    int mx,my;
-    const Uint8* keys;
+    
+    Vector2D camera;
+    Vector2D cameraSize;
+
     if (!self)return;
-    SDL_GetMouseState(&mx,&my);
-    int i = 0;
-    /*
-    aimdir.x = mx - (self->position.x + 64);
-    aimdir.y = my - (self->position.y + 64);
-    angle = vector_angle(aimdir.x,aimdir.y);
-    self->rotation.z = angle + 90;
-    */
-    //self->body.position.x = self->position.x+40;
-    //self->body.position.y = self->position.y;
+    cameraSize = camera_get_dimensions();
+    camera.x = (self->position.x + 64) - (cameraSize.x * 0.5);
+    camera.y = (self->position.y + 64) - (cameraSize.y * 0.5);
+    camera_set_position(camera);
+    // apply dampening on velocity
+    vector2d_scale(self->velocity, self->velocity, 0.75);
+    if (vector2d_magnitude_squared(self->velocity) < 2)
+    {
+        vector2d_clear(self->velocity);
+    }
     
-    
+    if (self->jumpcool > 0) self->jumpcool -= 0.2;
+    else self->jumpcool = 0;
+    if (self->projectcool > 0) self->projectcool -= 0.2;
+    else self->projectcool = 0;
 
     entity_world_snap(self);    // error correction for collision system
     entity_apply_gravity(self);
 
-    SDL_PumpEvents();
+    self->velocity.y += .5;
+
+    
+}
+
+void player_think(Entity* self)
+{
+    
+    const Uint8* keys;
+    
+    Vector2D aimdir, camera, thrust;
+    float angle;
+    int mx, my;
+    if (!self)return;
     keys = SDL_GetKeyboardState(NULL);
-    if (keys[SDL_SCANCODE_SPACE] && (self->grounded)) {
+    SDL_GetMouseState(&mx, &my);
+    /*
+    camera = camera_get_position();
+    mx += camera.x;
+    my += camera.y;
+    aimdir.x = mx - (self->position.x + 64);
+    aimdir.y = my - (self->position.y + 64);
+    angle = vector_angle(aimdir.x, aimdir.y);
+    self->rotation.z = angle + 90;
+
+    // turn aimdir into a unit vector
+    vector2d_normalize(&aimdir);
+    // check for motion
+    if (keys[SDL_SCANCODE_W])
+    {
+        vector2d_scale(thrust, aimdir, 5);
+        vector2d_add(self->velocity, self->velocity, thrust);
+
+    }
+    */
+
+
+    
+    if ((keys[SDL_SCANCODE_SPACE] && (self->grounded)) && (self->jumpcool <= 0)) {
 
         self->frameAnimStart = 42;
         if (self->frame < 42) {
             self->frame = 42;
         }
-        self->frameCount = 45;
-        
-        self->velocity.y -= 0.58;
-        
+        self->frameCount = 50;
+        self->jumpcool = 15;
+        self->velocity.y -= 15;
+        //vector2d_scale(thrust, vector2d(0, 1), -15);
+        //vector2d_add(self->velocity, self->velocity, thrust);
+
     }
     else if (keys[SDL_SCANCODE_D]) {
         self->frameAnimStart = 7;
@@ -102,7 +149,11 @@ void player_update(Entity *self)
         self->frameCount = 14;
         self->flip.x = 0;
         self->velocity.x = 1;
-        self->velocity.y += .58;
+        //self->velocity.y += .58;
+        //vector2d_scale(thrust, vector2d(1,0), 1.25);
+        //vector2d_add(self->velocity, self->velocity, thrust);
+        //vector2d_scale(thrust, vector2d(0, 1), 0.95);
+        //vector2d_add(self->velocity, self->velocity, thrust);
         if (keys[SDL_SCANCODE_J]) {
             self->frameAnimStart = 77;
             if (self->frame < 77) {
@@ -110,7 +161,7 @@ void player_update(Entity *self)
             }
             self->frameCount = 84;
             self->velocity.x = 0;
-            
+
         }
     }
     else if (keys[SDL_SCANCODE_A]) {
@@ -121,7 +172,11 @@ void player_update(Entity *self)
         self->frameCount = 14;
         self->flip.x = 1;
         self->velocity.x = -1;
-        self->velocity.y += .58;
+        //self->velocity.y += .58;
+        //vector2d_scale(thrust, vector2d(1, 0), -1.25);
+        //vector2d_add(self->velocity, self->velocity, thrust);
+        //vector2d_scale(thrust, vector2d(0, 1), 0.95);
+        //vector2d_add(self->velocity, self->velocity, thrust);
         if (keys[SDL_SCANCODE_J]) {
             self->frameAnimStart = 77;
             if (self->frame < 77) {
@@ -129,7 +184,7 @@ void player_update(Entity *self)
             }
             self->frameCount = 84;
             self->velocity.x = 0;
-            
+
         }
     }
     else if (keys[SDL_SCANCODE_S]) {
@@ -139,7 +194,8 @@ void player_update(Entity *self)
         }
         self->frameCount = 67;
         self->velocity.x = 0;
-        self->velocity.y += .58;
+        //vector2d_scale(thrust, vector2d(0, 1), 0.95);
+        //vector2d_add(self->velocity, self->velocity, thrust);
         if (keys[SDL_SCANCODE_J]) {
             self->frameAnimStart = 86;
             if (self->frame < 86) {
@@ -147,23 +203,24 @@ void player_update(Entity *self)
             }
             self->frameCount = 90;
             if (self->flip.x == 1) {
-                self->velocity.x = -0.5;
-                
+                self->velocity.x = -0.75;
+
             }
             else {
-                self->velocity.x = 0.5;
-                
+                self->velocity.x = 0.75;
+
             }
-        }   
+        }
     }
     else if ((keys[SDL_SCANCODE_J]) && !(keys[SDL_SCANCODE_S]) && !(keys[SDL_SCANCODE_A]) && !(keys[SDL_SCANCODE_D])) {
-        self->frameAnimStart =15;
+        self->frameAnimStart = 15;
         if (self->frame < 15) {
             self->frame = 15;
         }
         //i++;
         self->frameCount = 23;
-        self->velocity.y += .58;
+        //vector2d_scale(thrust, vector2d(0, 1), 0.95);
+        //vector2d_add(self->velocity, self->velocity, thrust);
         /*
         if ((keys[SDL_SCANCODE_J]) && (self->frame > 21) && (i == 1)) {
             self->frameAnimStart = 24;
@@ -174,14 +231,23 @@ void player_update(Entity *self)
             i--;
         }
         */
+    
     }
     else {
         self->frameAnimStart = 0;
         self->frameCount = 6;
         self->velocity.x = 0;
-        self->velocity.y += .58;
+        //vector2d_scale(thrust, vector2d(0, 1), 0.95);
+        //vector2d_add(self->velocity, self->velocity, thrust);
     }
+    if ((keys[SDL_SCANCODE_K] && self->projectcool <= 0)) {
+        Entity* dagger =  dagger_spawn(vector2d(self->position.x + 64, self->position.y));
+        level_add_entity(dagger);
+        self->projectcool = 15;
+    }
+
 }
+
 
 
 void player_attack_light(Entity* self)

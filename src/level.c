@@ -9,6 +9,10 @@
 
 static Level gamelevel = { 0 };
 
+Level level_get()
+{
+    return gamelevel;
+}
 
 Level *level_new()
 {
@@ -120,7 +124,7 @@ Level *level_load(const char *filename)
     
     gamelevel.space = gf2d_space_new_full(
         3,
-        gf2d_rect(0, 0, 1200, 700),
+        gf2d_rect(0, 0, 16000, 16000),
         0.1,
         vector2d(0, 0.1),
         1,
@@ -137,6 +141,7 @@ Level *level_load(const char *filename)
         drawPosition.y += offset.y;
         gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h));
     }
+    //gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_edge(100, 200, 255, 360)); //for slope
     sj_free(json);
     return level;
 }
@@ -158,6 +163,7 @@ void level_free(Level *level)
 
 void level_draw(Level *level)
 {
+    SDL_Rect camera;
     int i;
     Vector2D offset, drawPosition;
     if (!level)
@@ -196,13 +202,30 @@ void level_draw(Level *level)
             NULL,
             NULL,
             level->tileMap[i] - 1);
-        //gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h));
+        
         if (gamelevel.space)gf2d_space_draw(gamelevel.space, vector2d(0,0));
     }
 }
 
-void level_update()
+void level_update(Level* level)
 {
+    /*
+    SDL_Rect camera;
+    if (!level)return;
+    camera = camera_get_rect();
+    //snap camera to the level bounds
+    if ((camera.x + camera.w) > (int)level->levelSize.x)
+    {
+        camera.x = level->levelSize.x - camera.w;
+    }
+    if ((camera.y + camera.h) > (int)level->levelSize.y)
+    {
+        camera.y = level->levelSize.y - camera.h;
+    }
+    if (camera.x < 0)camera.x = 0;
+    if (camera.y < 0)camera.y = 0;
+    camera_set_position(vector2d(camera.x, camera.y));
+    */
     gf2d_entity_pre_sync_all();
     gf2d_space_update(gamelevel.space);
     gf2d_entity_post_sync_all();

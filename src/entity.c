@@ -70,6 +70,24 @@ void entity_manager_update_entities()
     }
 }
 
+void entity_manager_think_entities()
+{
+    int i;
+    if (entity_manager.entity_list == NULL)
+    {
+        slog("entity system does not exist");
+        return;
+    }
+    for (i = 0; i < entity_manager.max_entities; i++)
+    {
+        if (entity_manager.entity_list[i]._inuse == 0)continue;
+        if (entity_manager.entity_list[i].think != NULL)
+        {
+            entity_manager.entity_list[i].think(&entity_manager.entity_list[i]);
+        }
+    }
+}
+
 void entity_manager_draw_entities()
 {
     int i;
