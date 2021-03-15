@@ -14,6 +14,7 @@ void player_attack_light2(Entity* self);
 void player_attack_heavy(Entity* self);
 void player_attack_slide(Entity* self);
 void player_think(Entity* self);
+int  player_damage(Entity* self, int amount, Entity* source);
 
 Entity* player_get()
 {
@@ -40,8 +41,10 @@ Entity *player_spawn(Vector2D position)
     ent->frameCount = 6;
     ent->update = player_update;
     ent->think = player_think;
-    ent->health = 100;
-    ent->maxHealth = 100;
+    ent->damage = player_damage;
+    ent->health = 1000;
+    ent->maxHealth = 1000;
+    ent->str = 5;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
     ent->shape = gf2d_shape_rect(16, 5, 30, 30);
@@ -52,7 +55,7 @@ Entity *player_spawn(Vector2D position)
         PLAYER_LAYER,
         0,
         1,
-        position,
+        vector2d(ent->position.x,ent->position.y),
         vector2d(0, 0),
         10,
         1,
@@ -65,14 +68,14 @@ Entity *player_spawn(Vector2D position)
     return ent;
 }
 
-void player_melee(Entity* self)
+void player_melee(Entity* self,float damage)
 {
     Shape s;
     int i, count;
     Entity* other;
     Collision* c;
     List* collisionList = NULL;
-    s = gf2d_shape_rect(self->position.x + (self->flip.x * -48) + 16, self->position.y, 16, 40);
+    s = gf2d_shape_rect(self->position.x + (self->flip.x * -48) + 16, self->position.y, 32, 40);
     collisionList = entity_get_clipped_entities(self, s, MONSTER_LAYER, 0);
     count = gfc_list_get_count(collisionList);
     slog("hit %i targets", count);
@@ -83,7 +86,7 @@ void player_melee(Entity* self)
         if (!c->body)continue;
         if (!c->body->data)continue;
         other = c->body->data;
-        if (other->damage)other->damage(other, 1, self);//TODO: make this based on weapon / player stats
+        if (other->damage)other->damage(other, damage, self);//TODO: make this based on weapon / player stats
     }
     gf2d_collision_list_free(collisionList);
 }
@@ -110,6 +113,8 @@ void player_update(Entity *self)
     else self->jumpcool = 0;
     if (self->projectcool > 0) self->projectcool -= 0.2;
     else self->projectcool = 0;
+    if (self->attackcool > 0) self->attackcool -= 0.2;
+    else self->attackcool = 0;
 
     entity_world_snap(self);    // error correction for collision system
     entity_apply_gravity(self);
@@ -165,7 +170,7 @@ void player_think(Entity* self)
         //vector2d_add(self->velocity, self->velocity, thrust);
 
     }
-    else if (keys[SDL_SCANCODE_D]) {
+    else if (keys[SDL_SCANCODE_D] && (self->attackcool == 0)) {
         self->frameAnimStart = 7;
         if (self->frame < 7) {
             self->frame = 7;
@@ -183,12 +188,14 @@ void player_think(Entity* self)
             if (self->frame < 77) {
                 self->frame = 77;
             }
+            self->attack = 3;
+            self->attackcool = 15;
             self->frameCount = 84;
             self->velocity.x = 0;
 
         }
     }
-    else if (keys[SDL_SCANCODE_A]) {
+    else if (keys[SDL_SCANCODE_A] && (self->attackcool == 0)) {
         self->frameAnimStart = 7;
         if (self->frame < 7) {
             self->frame = 7;
@@ -206,12 +213,14 @@ void player_think(Entity* self)
             if (self->frame < 77) {
                 self->frame = 77;
             }
+            self->attack = 3;
+            self->attackcool = 15;
             self->frameCount = 84;
             self->velocity.x = 0;
 
         }
     }
-    else if (keys[SDL_SCANCODE_S]) {
+    else if (keys[SDL_SCANCODE_S] && (self->attackcool == 0)) {
         self->frameAnimStart = 65;
         if (self->frame < 65) {
             self->frame = 65;
@@ -221,6 +230,8 @@ void player_think(Entity* self)
         //vector2d_scale(thrust, vector2d(0, 1), 0.95);
         //vector2d_add(self->velocity, self->velocity, thrust);
         if (keys[SDL_SCANCODE_J]) {
+            self->attack = 2;
+            self->attackcool = 8;
             self->frameAnimStart = 86;
             if (self->frame < 86) {
                 self->frame = 86;
@@ -236,14 +247,17 @@ void player_think(Entity* self)
             }
         }
     }
-    else if ((keys[SDL_SCANCODE_J]) && !(keys[SDL_SCANCODE_S]) && !(keys[SDL_SCANCODE_A]) && !(keys[SDL_SCANCODE_D])) {
+    else if ((keys[SDL_SCANCODE_J]) && !(keys[SDL_SCANCODE_S]) && !(keys[SDL_SCANCODE_A]) && !(keys[SDL_SCANCODE_D]) && (self->attackcool == 0)) {
         self->frameAnimStart = 15;
         if (self->frame < 15) {
             self->frame = 15;
         }
         //i++;
         self->frameCount = 23;
-        player_melee(self);
+        self->attackcool = 15;
+        self->attack = 1;
+        //player_melee(self);
+
         //vector2d_scale(thrust, vector2d(0, 1), 0.95);
         //vector2d_add(self->velocity, self->velocity, thrust);
         /*
@@ -258,6 +272,46 @@ void player_think(Entity* self)
         */
     
     }
+    else if (self->attackcool > 0) {
+        if (self->attack == 1) {
+            if (self->frame >= self->frameCount - 0.5) {
+                player_melee(self,self->str);
+            }
+            if ((keys[SDL_SCANCODE_J]) && (self->frame >= self->frameCount - 0.5)) {
+                self->frameAnimStart = 24;
+                if (self->frame < 24) {
+                    self->frame = 24;
+                }
+                self->frameCount = 27;
+                self->attackcool = 5;
+                self->attack = 4;
+            }
+        }
+        if (self->attack == 2) {
+            if (self->frame >= self->frameCount - 0.05) {
+                player_melee(self, self->str/2);
+            }
+            if (self->flip.x == 1) {
+                self->velocity.x = -0.75;
+
+            }
+            else {
+                self->velocity.x = 0.75;
+
+            }
+        }
+        if (self->attack == 3) {
+            if (self->frame >= self->frameCount - 0.05) {
+                player_melee(self, self->str*2);
+            }
+        }
+        if (self->attack == 4) {
+            if (self->frame >= self->frameCount - 0.5) {
+                player_melee(self, self->str);
+            }
+        }
+
+    }
     else {
         self->frameAnimStart = 0;
         self->frameCount = 6;
@@ -266,7 +320,7 @@ void player_think(Entity* self)
         //vector2d_add(self->velocity, self->velocity, thrust);
     }
     if ((keys[SDL_SCANCODE_K] && self->projectcool <= 0)) {
-        Entity* dagger =  dagger_spawn(vector2d(self->position.x, self->position.y-6));
+        Entity* dagger =  dagger_spawn(vector2d(self->position.x, self->position.y+6),self->flip);
         level_add_entity(dagger);
         //slog("shoot");
         self->projectcool = 15;
@@ -274,8 +328,12 @@ void player_think(Entity* self)
 
 }
 
+int  player_damage(Entity* self, int amount, Entity* source)
+{
+    //slog("CRUNCH");
+    self->health -= amount;
 
-
+}
 
 
 

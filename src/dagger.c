@@ -17,7 +17,7 @@ Entity* player_get()
 }
 */
 
-Entity *dagger_spawn(Vector2D position)
+Entity *dagger_spawn(Vector2D position,Vector2D flip)
 {
     Entity *ent;
     ent = entity_new();
@@ -36,9 +36,10 @@ Entity *dagger_spawn(Vector2D position)
     ent->frameCount = 1;
     ent->update = dagger_update;
     ent->think = dagger_think;
+    ent->flip = flip;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
-    ent->shape = gf2d_shape_rect(16, 5, 30, 32);
+    ent->shape = gf2d_shape_rect(16, 0, 30, 16);
     gf2d_body_set(
         &ent->body,
         "dagger",
@@ -122,7 +123,7 @@ void dagger_think(Entity* self)
     keys = SDL_GetKeyboardState(NULL);
     SDL_GetMouseState(&mx, &my);
    
-    //fireball
+    //fireball magic
     //vector2d_scale(thrust, vector2d(0, -1), sin(self->jumpcool));
     //vector2d_add(self->velocity, self->velocity, thrust);
     
@@ -130,12 +131,19 @@ void dagger_think(Entity* self)
     //vector2d_scale(thrust, vector2d(0, -1), -0.75*abs(self->jumpcool)+2);
     //vector2d_add(self->velocity, self->velocity, thrust);
     
-    //barrier
+    //barrier magic
     //vector2d_scale(thrust, vector2d(1,0), cos(self->jumpcool)*2);
     //vector2d_add(self->velocity, self->velocity, thrust);
     
     //base
-    vector2d_scale(thrust, vector2d(1,0), 1);
+    if (self->flip.x == 1) {
+        vector2d_scale(thrust, vector2d(-1, 0), 1.85);
+        //vector2d_scale(thrust, vector2d(-1, 0), 1);
+    }
+    else {
+        vector2d_scale(thrust, vector2d(1, 0), 1.85);
+        //vector2d_scale(thrust, vector2d(-1, 0), 1);
+    }
     vector2d_add(self->velocity, self->velocity, thrust);
     
     Shape s;

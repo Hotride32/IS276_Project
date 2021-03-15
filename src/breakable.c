@@ -29,7 +29,7 @@ Entity* breakable_spawn(Vector2D position)
     ent = entity_new();
     if (!ent)
     {
-        slog("failed to create entity for the ramp");
+        slog("failed to create entity for the breakable");
         return NULL;
     }
     //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
@@ -58,7 +58,7 @@ Entity* breakable_spawn(Vector2D position)
     ent->activate = breakable_activate;
     //self->free = level_remove_entity;
 
-    ent->shape = gf2d_shape_rect(-16, -16, 32, 32);
+    ent->shape = gf2d_shape_rect(0, 0, 32, 32);
     gf2d_body_set(
         &ent->body,
         "breakable",

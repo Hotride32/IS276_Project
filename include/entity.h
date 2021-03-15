@@ -34,9 +34,15 @@ typedef struct Entity_s
 
     float health;                           /**<health of entity*/
     int   maxHealth;                        /**<maximum health of entity*/
+    float magicPt;
+    int   maxMagicPt;
+    int   mag;
+    int   str;
+    int   def;
     int   cooldown;                         /**<useful for timing cooldowns*/
     int   attack;                           /**<which attack is being performed*/
     int   count;                            /**<useful for counting things like ammo count or health ammount*/
+    float attackcool;
     float jumpcool;
     float projectcool;
     int   jumpcount;                        /**<used for multijump*/

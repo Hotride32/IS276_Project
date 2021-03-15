@@ -9,6 +9,7 @@
 #include "camera.h"
 #include "entity.h"
 #include "player.h"
+#include "spike.h"
 #include "level.h"
 #include "gf2d_space.h"
 #include "gf2d_collision.h"
@@ -67,9 +68,11 @@ int main(int argc, char * argv[])
     /*demo setup*/
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     level = level_load("levels/exampleLevel.json");
-    Entity* player = player_spawn(vector2d(100,435));
+    
     Entity* ramp = ramp_spawn(vector2d(224, 450));
     Entity* breakable = breakable_spawn(vector2d(600, 450));
+    Entity* spike = spike_spawn(vector2d(300, 450));
+    Entity* player = player_spawn(vector2d(100, 435));
     level_add_entity(player);
     //level_add_entity(ramp);
     font = font_load("fonts/Xenogears_font.ttf", 16);
