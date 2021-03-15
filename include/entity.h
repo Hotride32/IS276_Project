@@ -11,6 +11,7 @@ typedef struct Entity_s
 {
     Bool       _inuse;
     Vector2D    position;
+    Vector2D    spawnPos;
     Vector2D    velocity;
     Vector2D    flip;
     Vector2D    facing;

@@ -70,8 +70,10 @@ int main(int argc, char * argv[])
     level = level_load("levels/exampleLevel.json");
     
     Entity* ramp = ramp_spawn(vector2d(224, 450));
-    Entity* breakable = breakable_spawn(vector2d(600, 450));
-    Entity* spike = spike_spawn(vector2d(300, 450));
+    Entity* breakable = breakable_spawn(vector2d(600, 444));
+    Entity* spike = spike_spawn(vector2d(500, 450));
+    Entity* checkpoint = checkpoint_spawn(vector2d(450, 444));
+    Entity* checkpoint2 = checkpoint_spawn(vector2d(150, 444));
     Entity* player = player_spawn(vector2d(100, 435),"levels/player.json");
     level_add_entity(player);
     //level_add_entity(ramp);

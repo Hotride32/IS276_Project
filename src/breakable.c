@@ -3,6 +3,7 @@
 #include "level.h"
 #include "simple_logger.h"
 #include "entity.h"
+#include "dagger.h"
 
 void breakable_draw(Entity *self);
 void breakable_think(Entity *self);
@@ -151,6 +152,7 @@ void breakable_update(Entity *self)
     entity_world_snap(self);    // error correction for collision system
     entity_apply_gravity(self);
     if (self->health <= 0) {
+        //dagger_spawn(self->position);
         level_remove_entity(self);
         entity_free(self);
     }

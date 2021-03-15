@@ -1,15 +1,15 @@
 #include "simple_logger.h"
 
-#include "spike.h"
+#include "checkpoint.h"
 #include "camera.h"
 #include "level.h"
 #include "gf2d_particles.h"
 
 //static Entity* _player = NULL;
 
-void spike_update(Entity* self);
+void checkpoint_update(Entity* self);
 
-void spike_think(Entity* self);
+void checkpoint_think(Entity* self);
 /*
 Entity* player_get()
 {
@@ -17,34 +17,34 @@ Entity* player_get()
 }
 */
 
-Entity* spike_spawn(Vector2D position)
+Entity* checkpoint_spawn(Vector2D position)
 {
     Entity* ent;
     ent = entity_new();
     if (!ent)
     {
-        slog("failed to create entity for the spike");
+        slog("failed to create entity for the checkpoint");
         return NULL;
     }
     //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
-    ent->sprite = gf2d_sprite_load_all("images/spike_pixel.png", 32, 32, 1);
+    ent->sprite = gf2d_sprite_load_all("images/tile_castle.png", 32, 32, 15);
     //ent->laser = gf2d_sprite_load_all("images/Laser_sheet.png", 300, 100, 1);
     vector2d_copy(ent->position, position);
-    ent->frameAnimStart = 0;
-    ent->frame = 0;
+    ent->frameAnimStart = 219;
+    ent->frame = 219;
     ent->frameRate = 0.1;
-    ent->frameCount = 1;
-    ent->update = spike_update;
-    ent->think = spike_think;
+    ent->frameCount = 220;
+    ent->update = checkpoint_update;
+    ent->think = checkpoint_think;
     //ent->flip = flip;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
-    ent->shape = gf2d_shape_rect(position.x, position.y, 24, 32);
-    Level game = level_get();
-    gf2d_space_add_static_shape(game.space, ent->shape);
-    /*gf2d_body_set(
+    ent->shape = gf2d_shape_rect(0, 0, 32, 32);
+    //Level game = level_get();
+    //gf2d_space_add_static_shape(game.space, ent->shape);
+    gf2d_body_set(
         &ent->body,
-        "spike",
+        "checkpoint",
         1,
         WORLD_LAYER,
         0,
@@ -56,20 +56,21 @@ Entity* spike_spawn(Vector2D position)
         0,
         &ent->shape,
         ent,
-        NULL);*/
+        NULL);
 
-    //level_add_entity(ent);
+    level_add_entity(ent);
     return ent;
 }
 
-void spike_melee(Entity* self)
+void checkpoint_set(Entity* self)
 {
     Shape s;
     int i, count;
     Entity* other;
     Collision* c;
     List* collisionList = NULL;
-    s = gf2d_shape_rect(self->position.x+1, self->position.y-1, 31, 33);
+    //s = gf2d_shape_rect(self->position.x + 1, self->position.y - 1, 31, 33);
+    s = gf2d_body_to_shape(&self->body);
     collisionList = entity_get_clipped_entities(self, s, PLAYER_LAYER, 0);
     count = gfc_list_get_count(collisionList);
     //slog("hit %i targets", count);
@@ -80,25 +81,26 @@ void spike_melee(Entity* self)
         if (!c->body)continue;
         if (!c->body->data)continue;
         other = c->body->data;
-        if (other->damage)other->damage(other, 1, self);//TODO: make this based on weapon / player stats
+        if (other->damage)other->spawnPos = self->position;//TODO: make this based on weapon / player stats
     }
     gf2d_collision_list_free(collisionList);
 }
 
-void spike_update(Entity* self)
+void checkpoint_update(Entity* self)
 {
 
     Vector2D camera;
     Vector2D cameraSize;
 
     if (!self)return;
+    entity_world_snap(self);    // error correction for collision system
+    entity_apply_gravity(self);
 
-    
 
 
 }
 
-void spike_think(Entity* self)
+void checkpoint_think(Entity* self)
 {
 
     const Uint8* keys;
@@ -110,13 +112,9 @@ void spike_think(Entity* self)
     keys = SDL_GetKeyboardState(NULL);
     SDL_GetMouseState(&mx, &my);
 
-    
-    spike_melee(self);
 
-    
+    checkpoint_set(self);
+
+
 
 }
-
-
-
-/**/

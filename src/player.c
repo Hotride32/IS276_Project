@@ -38,8 +38,8 @@ SJson* player_to_json(Entity* player)
 
     sj_object_insert(json, "maxHealth", sj_new_float(player->maxHealth));
     sj_object_insert(json, "str", sj_new_int(player->str));
-    sj_object_insert(json, "position_x", sj_new_float(player->position.x));
-    sj_object_insert(json, "position_y", sj_new_float(player->position.y));
+    sj_object_insert(json, "position_x", sj_new_float(player->spawnPos.x));
+    sj_object_insert(json, "position_y", sj_new_float(player->spawnPos.y));
 
     return json;
 }
