@@ -2,6 +2,7 @@
 
 #include "dagger.h"
 #include "camera.h"
+#include "level.h"
 #include "gf2d_particles.h"
 
 //static Entity* _player = NULL;
@@ -37,7 +38,7 @@ Entity *dagger_spawn(Vector2D position)
     ent->think = dagger_think;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
-    ent->shape = gf2d_shape_rect(16, 5, 30, 40);
+    ent->shape = gf2d_shape_rect(16, 5, 30, 32);
     gf2d_body_set(
         &ent->body,
         "dagger",
@@ -58,6 +59,29 @@ Entity *dagger_spawn(Vector2D position)
     return ent;
 }
 
+void dagger_melee(Entity* self)
+{
+    Shape s;
+    int i, count;
+    Entity* other;
+    Collision* c;
+    List* collisionList = NULL;
+    s = gf2d_body_to_shape(&self->body);
+    gf2d_shape_move(&s, vector2d(0.1, 0));
+    collisionList = entity_get_clipped_entities(self, s, MONSTER_LAYER, 0);
+    count = gfc_list_get_count(collisionList);
+    //slog("hit %i targets", count);
+    for (i = 0; i < count; i++)
+    {
+        c = (Collision*)gfc_list_get_nth(collisionList, i);
+        if (!c)continue;
+        if (!c->body)continue;
+        if (!c->body->data)continue;
+        other = c->body->data;
+        if (other->damage)other->damage(other, 1, self);//TODO: make this based on weapon / player stats
+    }
+    gf2d_collision_list_free(collisionList);
+}
 
 void dagger_update(Entity *self)
 {
@@ -73,14 +97,15 @@ void dagger_update(Entity *self)
     {
         vector2d_clear(self->velocity);
     }
-    
+    /*
     if (self->jumpcool > 0) self->jumpcool -= 0.2;
     else self->jumpcool = 0;
-
+    */
     entity_world_snap(self);    // error correction for collision system
+    self->jumpcool += 0.2;
     //entity_apply_gravity(self);
 
-    //self->velocity.y += .5;
+    //self->velocity.y = 0;
 
     
 }
@@ -96,29 +121,61 @@ void dagger_think(Entity* self)
     if (!self)return;
     keys = SDL_GetKeyboardState(NULL);
     SDL_GetMouseState(&mx, &my);
-    /*
-    camera = camera_get_position();
-    mx += camera.x;
-    my += camera.y;
-    aimdir.x = mx - (self->position.x + 64);
-    aimdir.y = my - (self->position.y + 64);
-    angle = vector_angle(aimdir.x, aimdir.y);
-    self->rotation.z = angle + 90;
-
-    // turn aimdir into a unit vector
-    vector2d_normalize(&aimdir);
-    // check for motion
-    if (keys[SDL_SCANCODE_W])
-    {
-        vector2d_scale(thrust, aimdir, 5);
-        vector2d_add(self->velocity, self->velocity, thrust);
-
-    }
-    */
-
+   
+    //fireball
+    //vector2d_scale(thrust, vector2d(0, -1), sin(self->jumpcool));
+    //vector2d_add(self->velocity, self->velocity, thrust);
+    
+    //axe
+    //vector2d_scale(thrust, vector2d(0, -1), -0.75*abs(self->jumpcool)+2);
+    //vector2d_add(self->velocity, self->velocity, thrust);
+    
+    //barrier
+    //vector2d_scale(thrust, vector2d(1,0), cos(self->jumpcool)*2);
+    //vector2d_add(self->velocity, self->velocity, thrust);
+    
+    //base
     vector2d_scale(thrust, vector2d(1,0), 1);
     vector2d_add(self->velocity, self->velocity, thrust);
     
+    Shape s;
+    int i, count;
+    Collision* c;
+    List* collisionList;
+    CollisionFilter filter = {
+        1,
+        WORLD_LAYER,
+        0,
+        0,
+        &self->body
+    };
+
+    if (!self)return 0;
+    s = gf2d_body_to_shape(&self->body);
+    gf2d_shape_move(&s, vector2d(0.1, 0));
+
+    collisionList = gf2d_collision_check_space_shape(level_get_space(), s, filter);
+    if (collisionList != NULL)
+    {
+        count = gfc_list_get_count(collisionList);
+        for (i = 0; i < count; i++)
+        {
+            c = (Collision*)gfc_list_get_nth(collisionList, i);
+            if (!c)continue;
+            if (!c->shape)continue;
+            gf2d_shape_draw(*c->shape, gfc_color(255, 255, 0, 255), camera_get_offset());
+            level_remove_entity(self);
+            entity_free(self);
+        }
+        gf2d_collision_list_free(collisionList);
+        
+    }
+    dagger_melee(self);
+    
+    if (self->jumpcool >= 30) {
+        level_remove_entity(self);
+        entity_free(self);
+    }
     
 }
 

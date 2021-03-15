@@ -40,9 +40,11 @@ Entity *player_spawn(Vector2D position)
     ent->frameCount = 6;
     ent->update = player_update;
     ent->think = player_think;
+    ent->health = 100;
+    ent->maxHealth = 100;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
-    ent->shape = gf2d_shape_rect(16, 5, 30, 40);
+    ent->shape = gf2d_shape_rect(16, 5, 30, 30);
     gf2d_body_set(
         &ent->body,
         "player",
@@ -63,6 +65,28 @@ Entity *player_spawn(Vector2D position)
     return ent;
 }
 
+void player_melee(Entity* self)
+{
+    Shape s;
+    int i, count;
+    Entity* other;
+    Collision* c;
+    List* collisionList = NULL;
+    s = gf2d_shape_rect(self->position.x + (self->flip.x * -48) + 16, self->position.y, 16, 40);
+    collisionList = entity_get_clipped_entities(self, s, MONSTER_LAYER, 0);
+    count = gfc_list_get_count(collisionList);
+    slog("hit %i targets", count);
+    for (i = 0; i < count; i++)
+    {
+        c = (Collision*)gfc_list_get_nth(collisionList, i);
+        if (!c)continue;
+        if (!c->body)continue;
+        if (!c->body->data)continue;
+        other = c->body->data;
+        if (other->damage)other->damage(other, 1, self);//TODO: make this based on weapon / player stats
+    }
+    gf2d_collision_list_free(collisionList);
+}
 
 void player_update(Entity *self)
 {
@@ -219,6 +243,7 @@ void player_think(Entity* self)
         }
         //i++;
         self->frameCount = 23;
+        player_melee(self);
         //vector2d_scale(thrust, vector2d(0, 1), 0.95);
         //vector2d_add(self->velocity, self->velocity, thrust);
         /*
@@ -241,12 +266,17 @@ void player_think(Entity* self)
         //vector2d_add(self->velocity, self->velocity, thrust);
     }
     if ((keys[SDL_SCANCODE_K] && self->projectcool <= 0)) {
-        Entity* dagger =  dagger_spawn(vector2d(self->position.x + 64, self->position.y));
+        Entity* dagger =  dagger_spawn(vector2d(self->position.x, self->position.y-6));
         level_add_entity(dagger);
+        //slog("shoot");
         self->projectcool = 15;
     }
 
 }
+
+
+
+
 
 
 

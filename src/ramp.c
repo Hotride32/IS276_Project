@@ -23,7 +23,7 @@ Entity *ramp_spawn(Vector2D position)
     ent = entity_new();
     if (!ent)
     {
-        slog("failed to create entity for the dagger");
+        slog("failed to create entity for the ramp");
         return NULL;
     }
     //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
@@ -46,14 +46,14 @@ Entity *ramp_spawn(Vector2D position)
     gf2d_body_set(
         &ent->body,
         "ramp",
-        1,
-        WORLD_LAYER,
+        0,
+        MONSTER_LAYER,
         0,
         1,
         position,
         vector2d(0, 0),
-        0,
-        0,
+        100,
+        100,
         0,
         &ent->shape,
         ent,
@@ -71,7 +71,7 @@ void ramp_update(Entity *self)
     Vector2D cameraSize;
 
     if (!self)return;
-    
+   /*
     // apply dampening on velocity
     vector2d_scale(self->velocity, self->velocity, 0.75);
     if (vector2d_magnitude_squared(self->velocity) < 2)
@@ -81,8 +81,8 @@ void ramp_update(Entity *self)
     
     if (self->jumpcool > 0) self->jumpcool -= 0.2;
     else self->jumpcool = 0;
-
-    entity_world_snap(self);    // error correction for collision system
+    */
+    //entity_world_snap(self);    // error correction for collision system
     //entity_apply_gravity(self);
 
     //self->velocity.y += .5;

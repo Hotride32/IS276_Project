@@ -3,6 +3,8 @@
 #include "camera.h"
 #include "entity.h"
 
+
+
 typedef struct
 {
     Entity *entity_list;
@@ -275,5 +277,13 @@ void entity_world_snap(Entity* self)
     }
 }
 
+List* entity_get_clipped_entities(Entity* self, Shape s, Uint32 layers, Uint32 team)
+{
+    CollisionFilter filter = { 0 };
+    filter.ignore = &self->body;
+    filter.cliplayer = layers;
+    filter.team = team;
+    return gf2d_collision_check_space_shape(level_get_space(), s, filter);
+}
 
 /*eol@eof*/
