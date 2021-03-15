@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
     Entity* ramp = ramp_spawn(vector2d(224, 450));
     Entity* breakable = breakable_spawn(vector2d(600, 450));
     Entity* spike = spike_spawn(vector2d(300, 450));
-    Entity* player = player_spawn(vector2d(100, 435));
+    Entity* player = player_spawn(vector2d(100, 435),"levels/player.json");
     level_add_entity(player);
     //level_add_entity(ramp);
     font = font_load("fonts/Xenogears_font.ttf", 16);
@@ -83,59 +83,62 @@ int main(int argc, char * argv[])
 
 
     /*main game loop*/
-    while(!done)
+    while (!done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
-        SDL_GetMouseState(&mx,&my);
-        mf+=0.1;
+        SDL_GetMouseState(&mx, &my);
+        mf += 0.1;
         if (mf >= 16.0)mf = 0;
-        
+
         entity_manager_think_entities();
         entity_manager_update_entities();
-        
+
         //camera_set_position(player->position);
 
         level_update(level);
-        
+
 
 
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-            level_draw(level);
-            
-            
-            
-            //gf2d_space_draw(space, vector2d(0, 0));
-            /*if (collision.collided)
-            {
-                gf2d_draw_line(vector2d(mx, my), collision.pointOfContact, vector4d(255, 0, 0, 255));
-            }
-            else
-            {
-                gf2d_draw_line(vector2d(mx, my), vector2d(600, 360), vector4d(255, 255, 0, 255));
-            }*/
+        level_draw(level);
 
-            entity_manager_draw_entities();
 
-            //UI elements last
-            gf2d_sprite_draw(
-                mouse,
-                vector2d(mx,my),
-                NULL,
-                NULL,
-                NULL,
-                NULL,
-                &mouseColor,
-                (int)mf);
-            gfc_line_sprintf(fps_text, "Health : %0.0f ", player->health);
-            font_render(font, fps_text, vector2d(32, 32), gfc_color8(255, 0, 0, 255));
+
+        //gf2d_space_draw(space, vector2d(0, 0));
+        /*if (collision.collided)
+        {
+            gf2d_draw_line(vector2d(mx, my), collision.pointOfContact, vector4d(255, 0, 0, 255));
+        }
+        else
+        {
+            gf2d_draw_line(vector2d(mx, my), vector2d(600, 360), vector4d(255, 255, 0, 255));
+        }*/
+
+        entity_manager_draw_entities();
+
+        //UI elements last
+        gf2d_sprite_draw(
+            mouse,
+            vector2d(mx, my),
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            &mouseColor,
+            (int)mf);
+        gfc_line_sprintf(fps_text, "Health : %0.0f ", player->health);
+        font_render(font, fps_text, vector2d(32, 32), gfc_color8(255, 0, 0, 255));
 
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
-        
-        if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
+
+        if (keys[SDL_SCANCODE_ESCAPE]) {
+            player_save(player, "levels/player.json");
+        done = 1; // exit condition
+        }
 //        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");

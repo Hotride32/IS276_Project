@@ -1,6 +1,7 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
+#include "simple_json.h"
 #include "gfc_types.h"
 #include "gfc_vector.h"
 #include "gf2d_sprite.h"
@@ -33,7 +34,7 @@ typedef struct Entity_s
     void (*die)(struct Entity_S* self);     /**<when this entity dies*/
 
     float health;                           /**<health of entity*/
-    int   maxHealth;                        /**<maximum health of entity*/
+    float maxHealth;                        /**<maximum health of entity*/
     float magicPt;
     int   maxMagicPt;
     int   mag;

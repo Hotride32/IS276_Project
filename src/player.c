@@ -8,6 +8,8 @@
 
 static Entity* _player = NULL;
 
+
+
 void player_update(Entity *self);
 void player_attack_light(Entity* self);
 void player_attack_light2(Entity* self);
@@ -22,7 +24,38 @@ Entity* player_get()
 }
 
 
-Entity *player_spawn(Vector2D position)
+SJson* player_to_json(Entity* player)
+{
+    SJson* json;
+    //PlayerData* pd = NULL;
+    if (!player)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "maxHealth", sj_new_float(player->maxHealth));
+    sj_object_insert(json, "str", sj_new_int(player->str));
+    sj_object_insert(json, "position_x", sj_new_float(player->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(player->position.y));
+
+    return json;
+}
+
+void player_save(Entity* player, char* filename)
+{
+    SJson* json;
+    if (!player)return;
+
+    json = player_to_json(player);
+    if (!json)return;
+    sj_save(json, filename);
+}
+
+
+Entity *player_spawn(Vector2D position, const char* filename)
 {
     Entity *ent;
     ent = entity_new();
@@ -34,7 +67,21 @@ Entity *player_spawn(Vector2D position)
     //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
     ent->sprite = gf2d_sprite_load_all("images/Warrior_SheetnoEffect.png", 69, 44, 6);
     //ent->laser = gf2d_sprite_load_all("images/Laser_sheet.png", 300, 100, 1);
-    vector2d_copy(ent->position,position);
+
+    SJson* json;
+    json = sj_load(filename);
+    if (!json)
+    {
+        slog("failed to load scene file %s", filename);
+        entity_free(ent);
+        return NULL;
+    }
+    
+    sj_get_float_value(sj_object_get_value(json, "maxHealth"), &ent->maxHealth);
+    sj_get_float_value(sj_object_get_value(json, "position_x"), &ent->position.x);
+    sj_get_float_value(sj_object_get_value(json, "position_y"), &ent->position.y);
+    
+    //vector2d_copy(ent->position,position);
     ent->frameAnimStart = 0;
     ent->frame = 0;
     ent->frameRate = 0.1;
@@ -42,7 +89,7 @@ Entity *player_spawn(Vector2D position)
     ent->update = player_update;
     ent->think = player_think;
     ent->damage = player_damage;
-    ent->health = 1000;
+    ent->health = ent->maxHealth;
     ent->maxHealth = 1000;
     ent->str = 5;
     ent->rotation.x = 64;
