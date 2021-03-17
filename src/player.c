@@ -372,6 +372,36 @@ void player_think(Entity* self)
         //slog("shoot");
         self->projectcool = 15;
     }
+    if ((keys[SDL_SCANCODE_L] && self->projectcool <= 0)) {
+        Entity* axe = axe_spawn(vector2d(self->position.x, self->position.y), self->flip);
+        level_add_entity(axe);
+        //slog("shoot");
+        self->projectcool = 15;
+    }
+    if ((keys[SDL_SCANCODE_I] && self->projectcool <= 0)) {
+        Entity* fireball = fireball_spawn(vector2d(self->position.x, self->position.y), self->flip);
+        level_add_entity(fireball);
+        //slog("shoot");
+        self->projectcool = 15;
+    }
+    if ((keys[SDL_SCANCODE_O] && self->projectcool <= 0)) {
+        Entity* barrier = barrier_spawn(vector2d(self->position.x, self->position.y+6), self->flip);
+        level_add_entity(barrier);
+        //slog("shoot");
+        self->projectcool = 15;
+    }
+    if ((keys[SDL_SCANCODE_U] && self->projectcool <= 0)) {
+        Entity* bomb = bomb_spawn(vector2d(self->position.x+32, self->position.y+16), self->flip);
+        level_add_entity(bomb);
+        //slog("shoot");
+        self->projectcool = 15;
+    }
+    if ((keys[SDL_SCANCODE_P] && self->projectcool <= 0)) {
+        Entity* laser = laser_spawn(vector2d(self->position.x, self->position.y-16), vector2d(0,0));
+        level_add_entity(laser);
+        //slog("shoot");
+        self->projectcool = 15;
+    }
 
 }
 

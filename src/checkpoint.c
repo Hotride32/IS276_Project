@@ -46,7 +46,7 @@ Entity* checkpoint_spawn(Vector2D position)
         &ent->body,
         "checkpoint",
         1,
-        WORLD_LAYER,
+        OBJECT_LAYER,
         0,
         1,
         position,
