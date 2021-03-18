@@ -9,6 +9,6 @@
  * @param position the screen position to spawn the player at
  * @return NULL on error, or a pointer to a new player entity
  */
-Entity* Ramp_spawn(Vector2D position);
+Entity* ramp_spawn(Vector2D position);
 
 #endif

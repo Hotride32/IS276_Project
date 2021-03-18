@@ -6,6 +6,7 @@
 
 #include "gf2d_sprite.h"
 #include "gf2d_space.h"
+#include "entity.h"
 
 typedef enum
 {
@@ -59,5 +60,13 @@ void level_free(Level *level);
  * @param level the level the draw
  */
 void level_draw(Level *level);
+
+void level_update(Level* level);
+
+void level_add_entity(Entity* ent);
+
+void level_remove_entity(Entity* ent);
+
+Space* level_get_space();
 
 #endif

@@ -47,8 +47,8 @@ Entity* breakable_spawn(Vector2D position)
     ent->rotation.y = 64;
     //ent->shape = gf2d_shape_edge(position.x - 5, position.y + 32, position.x + 32, position.y - 2);
 
-    ent->health = 20;
-    ent->maxHealth = 20;
+    ent->health = 1;
+    ent->maxHealth = 1;
 
     ent->think = breakable_think;
     //ent->draw = breakable_draw;

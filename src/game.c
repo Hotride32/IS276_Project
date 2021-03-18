@@ -9,6 +9,10 @@
 #include "camera.h"
 #include "entity.h"
 #include "player.h"
+#include "ramp.h"
+#include "breakable.h"
+#include "checkpoint.h"
+#include "monster.h"
 #include "spike.h"
 #include "level.h"
 #include "gf2d_space.h"
@@ -74,8 +78,10 @@ int main(int argc, char * argv[])
     Entity* spike = spike_spawn(vector2d(500, 450));
     Entity* checkpoint = checkpoint_spawn(vector2d(450, 444));
     Entity* checkpoint2 = checkpoint_spawn(vector2d(150, 444));
+    //Entity* monster = monster_spawn(vector2d(700, 444));
     Entity* player = player_spawn(vector2d(100, 435),"levels/player.json");
-    level_add_entity(player);
+    Entity* monster = monster_spawn(vector2d(700, 435));
+    //level_add_entity(player);
     //level_add_entity(ramp);
     font = font_load("fonts/Xenogears_font.ttf", 16);
     //font = font_load("fonts/colony_wars.ttf", 8);
@@ -132,7 +138,7 @@ int main(int argc, char * argv[])
             NULL,
             &mouseColor,
             (int)mf);
-        gfc_line_sprintf(fps_text, "Health : %0.0f ", player->health);
+        gfc_line_sprintf(fps_text, "Health : %0.0f/%0.0f ", player->health, player->maxHealth);
         font_render(font, fps_text, vector2d(32, 32), gfc_color8(255, 0, 0, 255));
 
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame

@@ -111,7 +111,8 @@ Entity *player_spawn(Vector2D position, const char* filename)
         ent,
         NULL);
     
-
+    _player = ent;
+    level_add_entity(ent);
     return ent;
 }
 
@@ -397,10 +398,21 @@ void player_think(Entity* self)
         self->projectcool = 15;
     }
     if ((keys[SDL_SCANCODE_P] && self->projectcool <= 0)) {
-        Entity* laser = laser_spawn(vector2d(self->position.x, self->position.y-16), vector2d(0,0));
-        level_add_entity(laser);
-        //slog("shoot");
-        self->projectcool = 15;
+        Entity* laser;
+        if (self->flip.x == 1) {
+            laser = laser_spawn(vector2d(self->position.x-230, self->position.y - 16), self->flip);
+            
+        }
+        else {
+            laser = laser_spawn(vector2d(self->position.x, self->position.y - 16), self->flip);
+            
+        }
+        //Entity* laser = laser_spawn(vector2d(self->position.x, self->position.y-16), vector2d(0,0));
+        if (laser != NULL) {
+            level_add_entity(laser);
+            //slog("shoot");
+            self->projectcool = 15;
+        }
     }
 
 }

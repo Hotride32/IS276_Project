@@ -110,5 +110,35 @@ void entity_world_snap(Entity* self);
  */
 void entity_apply_gravity(Entity* self);
 
+/**
+ * @brief check if the entity is about to walk off the edge of a platform
+ * @note useful for AI
+ * @param self the entity to check for
+ * @return 0 if there is no more platform, 1 if there is something there
+ *
+ */
+int entity_platform_end_check(Entity* self);
+
+/**
+ * @brief check if the entity is adjacent to a static shape in the world.
+ * @note this is used for testing if the entity is on the ground or to prevent getting stuck on a wall
+ * @param self the entity to check for
+ * @param dir the direction to offset by
+ * @returns 0 if all clear, 1 if the world can be touched
+ */
+int entity_wall_check(Entity* self, Vector2D dir);
+
+/**
+ * @brief push other entity away from self by amount
+ */
+void entity_push(Entity* self, Entity* other, float amount);
+
+List* entity_get_clipped_entities(Entity* self, Shape s, Uint32 layers, Uint32 team);
+
+void gf2d_entity_pre_sync_all();
+
+void gf2d_entity_post_sync_all();
+
+void entity_damage(Entity* target, Entity* killer, int damage, float kick);
 
 #endif

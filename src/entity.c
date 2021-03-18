@@ -286,4 +286,60 @@ List* entity_get_clipped_entities(Entity* self, Shape s, Uint32 layers, Uint32 t
     return gf2d_collision_check_space_shape(level_get_space(), s, filter);
 }
 
+int entity_platform_end_check(Entity* self)
+{
+    Shape s;
+    Rect r;
+    List* collisionList;
+    CollisionFilter filter = {
+        1,
+        WORLD_LAYER,
+        0,
+        0,
+        &self->body
+    };
+
+    if (!self)return 0;
+    s = gf2d_body_to_shape(&self->body);
+    r = gf2d_shape_get_bounds(s);
+    gf2d_shape_move(&s, vector2d(r.w * self->facing.x, 3));
+
+    collisionList = gf2d_collision_check_space_shape(level_get_space(), s, filter);
+    if (collisionList != NULL)
+    {
+        gf2d_collision_list_free(collisionList);
+        return 1;
+    }
+    return 0;
+}
+
+void entity_push(Entity* self, Entity* other, float amount)
+{
+    Vector2D push;
+    if ((!self) || (!other))
+    {
+        slog("missing an entity");
+        return;
+    }
+    vector2d_sub(push, other->position, self->position);
+    vector2d_set_magnitude(&push, amount);
+    vector2d_add(other->velocity, other->velocity, push);
+    vector2d_add(other->body.velocity, other->body.velocity, push);
+}
+
+void entity_damage(Entity* target, Entity* killer, int damage, float kick)
+{
+    if ((!target) || (!killer))
+    {
+        slog("missing entity data");
+        return;
+    }
+    if (target->damage != NULL)
+    {
+        target->damage(target, damage, killer);
+        entity_push(killer, target, kick);
+    }
+}
+
+
 /*eol@eof*/

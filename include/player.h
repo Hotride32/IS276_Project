@@ -10,4 +10,8 @@
  */
 Entity *player_spawn(Vector2D position, const char* filename);
 
+Entity* player_get();
+
+void player_save(Entity* player, char* filename);
+
 #endif
