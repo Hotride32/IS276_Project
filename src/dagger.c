@@ -901,7 +901,7 @@ void bomb_think(Entity* self)
 
 }
 
-Entity* laser_spawn(Vector2D position, Vector2D flip)
+Entity* laser_spawn(Vector2D position, Vector2D flip, char layer)
 {
     Entity* ent;
     ent = entity_new();
@@ -924,6 +924,7 @@ Entity* laser_spawn(Vector2D position, Vector2D flip)
     ent->frameCount = 14;
     ent->update = laser_update;
     ent->think = laser_think;
+    ent->hitLayer = layer;
     //ent->flip = flip;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
@@ -960,7 +961,7 @@ void laser_melee(Entity* self)
 
 
     s = gf2d_shape_rect(self->position.x + (self->flip.x * -48) - 16, self->position.y, 300, 32);
-    collisionList = entity_get_clipped_entities(self, s, MONSTER_LAYER, 0);
+    collisionList = entity_get_clipped_entities(self, s, self->hitLayer, 0);
     count = gfc_list_get_count(collisionList);
     //slog("hit %i targets", count);
     for (i = 0; i < count; i++)

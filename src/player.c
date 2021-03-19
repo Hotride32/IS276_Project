@@ -400,11 +400,11 @@ void player_think(Entity* self)
     if ((keys[SDL_SCANCODE_P] && self->projectcool <= 0)) {
         Entity* laser;
         if (self->flip.x == 1) {
-            laser = laser_spawn(vector2d(self->position.x-230, self->position.y - 16), self->flip);
+            laser = laser_spawn(vector2d(self->position.x-230, self->position.y - 16), self->flip, MONSTER_LAYER);
             
         }
         else {
-            laser = laser_spawn(vector2d(self->position.x, self->position.y - 16), self->flip);
+            laser = laser_spawn(vector2d(self->position.x, self->position.y - 16), self->flip, MONSTER_LAYER);
             
         }
         //Entity* laser = laser_spawn(vector2d(self->position.x, self->position.y-16), vector2d(0,0));

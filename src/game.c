@@ -13,6 +13,8 @@
 #include "skull.h"
 #include "skeleton.h"
 #include "tower.h"
+#include "magicboss.h"
+#include "al.h"
 #include "angel.h"
 #include "breakable.h"
 #include "checkpoint.h"
@@ -89,6 +91,11 @@ int main(int argc, char * argv[])
     Entity* skeleton = skeleton_spawn(vector2d(800, 400));
     Entity* tower = tower_spawn(vector2d(900, 400));
     Entity* angel = angel_spawn(vector2d(1000, 350));
+
+    //Entity* magicBoss = magicBoss_spawn(vector2d(1750, 350));
+    Entity* al = al_spawn(vector2d(1750, 350));
+
+
     //level_add_entity(player);
     //level_add_entity(ramp);
     font = font_load("fonts/Xenogears_font.ttf", 16);

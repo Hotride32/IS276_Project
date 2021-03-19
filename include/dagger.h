@@ -16,8 +16,8 @@ Entity* fireball_spawn(Vector2D position, Vector2D flip, char layer);
 
 Entity* barrier_spawn(Vector2D position, Vector2D flip);
 
-Entity* bomb_spawn(Vector2D position, Vector2D flip);
+Entity* bomb_spawn(Vector2D position, Vector2D flip, char layer);
 
-Entity* laser_spawn(Vector2D position, Vector2D flip);
+Entity* laser_spawn(Vector2D position, Vector2D flip, char layer);
 
 #endif
