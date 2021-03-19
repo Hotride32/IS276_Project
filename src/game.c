@@ -10,6 +10,10 @@
 #include "entity.h"
 #include "player.h"
 #include "ramp.h"
+#include "skull.h"
+#include "skeleton.h"
+#include "tower.h"
+#include "angel.h"
 #include "breakable.h"
 #include "checkpoint.h"
 #include "monster.h"
@@ -81,6 +85,10 @@ int main(int argc, char * argv[])
     //Entity* monster = monster_spawn(vector2d(700, 444));
     Entity* player = player_spawn(vector2d(100, 435),"levels/player.json");
     Entity* monster = monster_spawn(vector2d(700, 435));
+    Entity* skull = skull_spawn(vector2d(400, 300));
+    Entity* skeleton = skeleton_spawn(vector2d(800, 400));
+    Entity* tower = tower_spawn(vector2d(900, 400));
+    Entity* angel = angel_spawn(vector2d(1000, 350));
     //level_add_entity(player);
     //level_add_entity(ramp);
     font = font_load("fonts/Xenogears_font.ttf", 16);

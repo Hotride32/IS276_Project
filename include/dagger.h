@@ -12,7 +12,7 @@ Entity* dagger_spawn(Vector2D position, Vector2D flip);
 
 Entity* axe_spawn(Vector2D position, Vector2D flip);
 
-Entity* fireball_spawn(Vector2D position, Vector2D flip);
+Entity* fireball_spawn(Vector2D position, Vector2D flip, char layer);
 
 Entity* barrier_spawn(Vector2D position, Vector2D flip);
 

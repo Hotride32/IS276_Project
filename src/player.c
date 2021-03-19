@@ -380,7 +380,7 @@ void player_think(Entity* self)
         self->projectcool = 15;
     }
     if ((keys[SDL_SCANCODE_I] && self->projectcool <= 0)) {
-        Entity* fireball = fireball_spawn(vector2d(self->position.x, self->position.y), self->flip);
+        Entity* fireball = fireball_spawn(vector2d(self->position.x, self->position.y), self->flip,MONSTER_LAYER);
         level_add_entity(fireball);
         //slog("shoot");
         self->projectcool = 15;
@@ -392,7 +392,7 @@ void player_think(Entity* self)
         self->projectcool = 15;
     }
     if ((keys[SDL_SCANCODE_U] && self->projectcool <= 0)) {
-        Entity* bomb = bomb_spawn(vector2d(self->position.x+32, self->position.y+16), self->flip);
+        Entity* bomb = bomb_spawn(vector2d(self->position.x+32, self->position.y+16), self->flip, MONSTER_LAYER);
         level_add_entity(bomb);
         //slog("shoot");
         self->projectcool = 15;

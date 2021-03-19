@@ -20,6 +20,7 @@ typedef struct Entity_s
     Sprite*     laser;
     Shape       shape;
     Body        body;
+    char        hitLayer;
     float       frame;
     float       frameRate;
     int         frameCount;

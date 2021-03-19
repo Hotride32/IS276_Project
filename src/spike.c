@@ -69,7 +69,7 @@ void spike_melee(Entity* self)
     Entity* other;
     Collision* c;
     List* collisionList = NULL;
-    s = gf2d_shape_rect(self->position.x+1, self->position.y-1, 31, 33);
+    s = gf2d_shape_rect(self->position.x+1, self->position.y-1, 19, 33);
     collisionList = entity_get_clipped_entities(self, s, PLAYER_LAYER, 0);
     count = gfc_list_get_count(collisionList);
     //slog("hit %i targets", count);

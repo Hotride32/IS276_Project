@@ -378,7 +378,7 @@ void axe_think(Entity* self)
 
 }
 
-Entity* fireball_spawn(Vector2D position, Vector2D flip)
+Entity* fireball_spawn(Vector2D position, Vector2D flip, char layer)
 {
     Entity* ent;
     ent = entity_new();
@@ -398,6 +398,7 @@ Entity* fireball_spawn(Vector2D position, Vector2D flip)
     ent->update = fireball_update;
     ent->think = fireball_think;
     ent->flip = flip;
+    ent->hitLayer = layer;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
     ent->shape = gf2d_shape_rect(16, 0, 30, 16);
@@ -430,7 +431,7 @@ void fireball_melee(Entity* self)
     List* collisionList = NULL;
     s = gf2d_body_to_shape(&self->body);
     gf2d_shape_move(&s, vector2d(0.1, 0));
-    collisionList = entity_get_clipped_entities(self, s, MONSTER_LAYER, 0);
+    collisionList = entity_get_clipped_entities(self, s, self->hitLayer, 0);
     count = gfc_list_get_count(collisionList);
     //slog("hit %i targets", count);
     for (i = 0; i < count; i++)
@@ -723,7 +724,7 @@ void barrier_think(Entity* self)
 
 }
 
-Entity* bomb_spawn(Vector2D position, Vector2D flip)
+Entity* bomb_spawn(Vector2D position, Vector2D flip, char layer)
 {
     Entity* ent;
     ent = entity_new();
@@ -742,6 +743,7 @@ Entity* bomb_spawn(Vector2D position, Vector2D flip)
     ent->frameCount = 6;
     ent->update = bomb_update;
     ent->think = bomb_think;
+    ent->hitLayer = layer;
     ent->flip = flip;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
@@ -778,7 +780,7 @@ void bomb_melee(Entity* self)
     
 
     s = gf2d_shape_rect(self->position.x + (self->flip.x * -48) - 16, self->position.y, 64, 64);
-    collisionList = entity_get_clipped_entities(self, s, MONSTER_LAYER, 0);
+    collisionList = entity_get_clipped_entities(self, s, self->hitLayer, 0);
     count = gfc_list_get_count(collisionList);
     //slog("hit %i targets", count);
     for (i = 0; i < count; i++)
@@ -815,7 +817,7 @@ void bomb_update(Entity* self)
     self->jumpcool += 0.2;
     //entity_apply_gravity(self);
 
-    //self->velocity.y = 0;
+    self->velocity.y += .5;
 
 
 }
