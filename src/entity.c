@@ -341,5 +341,16 @@ void entity_damage(Entity* target, Entity* killer, int damage, float kick)
     }
 }
 
+Entity* entity_get_touching_player(Entity* self)
+{
+    Entity* player;
+    player = player_get();
+    if (!player)return NULL;
+    if (gf2d_body_body_collide(&self->body, &player->body))
+    {
+        return player;
+    }
+    return NULL;
+}
 
 /*eol@eof*/

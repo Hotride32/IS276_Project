@@ -38,10 +38,16 @@ typedef struct Entity_s
     float health;                           /**<health of entity*/
     float maxHealth;                        /**<maximum health of entity*/
     float magicPt;
-    int   maxMagicPt;
+    float  maxMagicPt;
     int   mag;
     int   str;
     int   def;
+    float   bombCount;
+    float   knifeCount;
+    float   axeCount;
+    float   maxbombCount;
+    float   maxknifeCount;
+    float   maxaxeCount;
     int   cooldown;                         /**<useful for timing cooldowns*/
     int   attack;                           /**<which attack is being performed*/
     int   count;                            /**<useful for counting things like ammo count or health ammount*/
@@ -141,5 +147,7 @@ void gf2d_entity_pre_sync_all();
 void gf2d_entity_post_sync_all();
 
 void entity_damage(Entity* target, Entity* killer, int damage, float kick);
+
+Entity* entity_get_touching_player(Entity* self);
 
 #endif

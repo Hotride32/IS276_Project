@@ -203,7 +203,7 @@ void level_draw(Level *level)
             NULL,
             level->tileMap[i] - 1);
         
-        if (gamelevel.space)gf2d_space_draw(gamelevel.space, vector2d(0,0));
+        //if (gamelevel.space)gf2d_space_draw(gamelevel.space, vector2d(0,0));
     }
 }
 

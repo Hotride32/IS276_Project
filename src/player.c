@@ -36,10 +36,16 @@ SJson* player_to_json(Entity* player)
     //pd = (PlayerData*)player->data;
     //vector2d_copy(pd->position, player->position);
 
+    sj_object_insert(json, "health", sj_new_float(player->health));
     sj_object_insert(json, "maxHealth", sj_new_float(player->maxHealth));
+    sj_object_insert(json, "MP", sj_new_float(player->magicPt));
+    sj_object_insert(json, "maxMP", sj_new_float(player->maxMagicPt));
     sj_object_insert(json, "str", sj_new_int(player->str));
     sj_object_insert(json, "position_x", sj_new_float(player->spawnPos.x));
     sj_object_insert(json, "position_y", sj_new_float(player->spawnPos.y));
+    sj_object_insert(json, "knifeCount", sj_new_float(player->knifeCount));
+    sj_object_insert(json, "axeCount", sj_new_float(player->axeCount));
+    sj_object_insert(json, "bombCount", sj_new_float(player->bombCount));
 
     return json;
 }
@@ -76,11 +82,28 @@ Entity *player_spawn(Vector2D position, const char* filename)
         entity_free(ent);
         return NULL;
     }
-    
+
+    sj_get_float_value(sj_object_get_value(json, "health"), &ent->health);
     sj_get_float_value(sj_object_get_value(json, "maxHealth"), &ent->maxHealth);
     sj_get_float_value(sj_object_get_value(json, "position_x"), &ent->position.x);
     sj_get_float_value(sj_object_get_value(json, "position_y"), &ent->position.y);
+    sj_get_float_value(sj_object_get_value(json, "MP"), &ent->magicPt);
+    sj_get_float_value(sj_object_get_value(json, "maxMP"), &ent->maxMagicPt);
+    sj_get_float_value(sj_object_get_value(json, "str"), &ent->str);
+    sj_get_float_value(sj_object_get_value(json, "knifeCount"), &ent->knifeCount);
+    sj_get_float_value(sj_object_get_value(json, "axeCount"), &ent->axeCount);
+    sj_get_float_value(sj_object_get_value(json, "bombCount"), &ent->bombCount);
     
+
+    //ent->maxMagicPt = 100;
+    //ent->magicPt = ent->maxMagicPt;
+    ent->maxaxeCount = 99;
+    ent->maxknifeCount = 99;
+    ent->maxbombCount = 99;
+    //ent->axeCount = 0;
+    //ent->knifeCount = 0;
+    //ent->bombCount = 0;
+
     //vector2d_copy(ent->position,position);
     ent->frameAnimStart = 0;
     ent->frame = 0;
@@ -89,9 +112,9 @@ Entity *player_spawn(Vector2D position, const char* filename)
     ent->update = player_update;
     ent->think = player_think;
     ent->damage = player_damage;
-    ent->health = ent->maxHealth;
-    ent->maxHealth = 1000;
-    ent->str = 5;
+    //ent->health = ent->maxHealth;
+    //ent->maxHealth = 1000;
+    //ent->str = 5;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
     ent->shape = gf2d_shape_rect(16, 5, 30, 30);
@@ -367,37 +390,42 @@ void player_think(Entity* self)
         //vector2d_scale(thrust, vector2d(0, 1), 0.95);
         //vector2d_add(self->velocity, self->velocity, thrust);
     }
-    if ((keys[SDL_SCANCODE_K] && self->projectcool <= 0)) {
+    if ((keys[SDL_SCANCODE_K] && self->projectcool <= 0) && self->knifeCount > 0) {
         Entity* dagger =  dagger_spawn(vector2d(self->position.x, self->position.y+6),self->flip);
         level_add_entity(dagger);
         //slog("shoot");
+        self->knifeCount -= 1;
         self->projectcool = 15;
     }
-    if ((keys[SDL_SCANCODE_L] && self->projectcool <= 0)) {
+    if ((keys[SDL_SCANCODE_L] && self->projectcool <= 0) && self->axeCount > 0) {
         Entity* axe = axe_spawn(vector2d(self->position.x, self->position.y), self->flip);
         level_add_entity(axe);
         //slog("shoot");
+        self->axeCount -= 1;
         self->projectcool = 15;
     }
-    if ((keys[SDL_SCANCODE_I] && self->projectcool <= 0)) {
+    if ((keys[SDL_SCANCODE_I] && self->projectcool <= 0) && self->magicPt >= 10) {
         Entity* fireball = fireball_spawn(vector2d(self->position.x, self->position.y), self->flip,MONSTER_LAYER);
         level_add_entity(fireball);
         //slog("shoot");
+        self->magicPt -= 10;
         self->projectcool = 15;
     }
-    if ((keys[SDL_SCANCODE_O] && self->projectcool <= 0)) {
+    if ((keys[SDL_SCANCODE_O] && self->projectcool <= 0) && self->magicPt >= 25) {
         Entity* barrier = barrier_spawn(vector2d(self->position.x, self->position.y+6), self->flip);
         level_add_entity(barrier);
         //slog("shoot");
+        self->magicPt -= 25;
         self->projectcool = 15;
     }
-    if ((keys[SDL_SCANCODE_U] && self->projectcool <= 0)) {
+    if ((keys[SDL_SCANCODE_U] && self->projectcool <= 0) && self->bombCount > 0){
         Entity* bomb = bomb_spawn(vector2d(self->position.x+32, self->position.y+16), self->flip, MONSTER_LAYER);
         level_add_entity(bomb);
         //slog("shoot");
+        self->bombCount -= 1;
         self->projectcool = 15;
     }
-    if ((keys[SDL_SCANCODE_P] && self->projectcool <= 0)) {
+    if ((keys[SDL_SCANCODE_P] && self->projectcool <= 0) && self->magicPt >= 100) {
         Entity* laser;
         if (self->flip.x == 1) {
             laser = laser_spawn(vector2d(self->position.x-230, self->position.y - 16), self->flip, MONSTER_LAYER);
@@ -410,7 +438,7 @@ void player_think(Entity* self)
         //Entity* laser = laser_spawn(vector2d(self->position.x, self->position.y-16), vector2d(0,0));
         if (laser != NULL) {
             level_add_entity(laser);
-            //slog("shoot");
+            self->magicPt -= 100;
             self->projectcool = 15;
         }
     }
