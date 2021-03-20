@@ -4,6 +4,7 @@
 #include "simple_logger.h"
 #include "entity.h"
 #include "dagger.h"
+#include "pickup.h"
 
 void breakable_draw(Entity *self);
 void breakable_think(Entity *self);
@@ -153,6 +154,15 @@ void breakable_update(Entity *self)
     entity_apply_gravity(self);
     if (self->health <= 0) {
         //dagger_spawn(self->position);
+        int r = rand() % 3;
+        //slog("%i", r);
+        if (r == 2) {
+            health_spawn(self->position);
+        }
+        else if (r == 1) {
+            magic_spawn(self->position);
+        }
+        
         level_remove_entity(self);
         entity_free(self);
     }

@@ -2,6 +2,7 @@
 #include "level.h"
 #include "player.h"
 #include "simple_logger.h"
+#include "pickup.h"
 //#include "particle_effects.h"
 #include "entity.h"
 
@@ -374,6 +375,15 @@ int monster_player_sight_check(Entity *self)
 
 void monster_die(Entity *self)
 {
+    int r = rand() % 3;
+    //slog("%i", r);
+    if (r == 2) {
+        health_spawn(self->position);
+    }
+    else if (r == 1) {
+        magic_spawn(self->position);
+    }
+
     level_remove_entity(self);
     entity_free(self);
     /*if (!gf2d_actor_get_frames_remaining(&self->actor))

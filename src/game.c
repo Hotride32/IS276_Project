@@ -80,15 +80,15 @@ int main(int argc, char * argv[])
     /*demo setup*/
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     level = level_load("levels/exampleLevel.json");
-    
+    /*
     ramp_spawn(vector2d(224, 450));
     breakable_spawn(vector2d(600, 444));
     spike_spawn(vector2d(500, 450));
     checkpoint_spawn(vector2d(450, 444));
-    checkpoint_spawn(vector2d(150, 444));
+    checkpoint_spawn(vector2d(150, 444));*/
     //Entity* monster = monster_spawn(vector2d(700, 444));
     Entity* player = player_spawn(vector2d(100, 435),"levels/player.json");
-    monster_spawn(vector2d(700, 435));
+    /*monster_spawn(vector2d(700, 435));
     skull_spawn(vector2d(400, 300));
     skeleton_spawn(vector2d(800, 400));
     tower_spawn(vector2d(900, 400));
@@ -97,11 +97,11 @@ int main(int argc, char * argv[])
     magic_spawn(vector2d(120, 260));
     axePick_spawn(vector2d(140, 260));
     knifePick_spawn(vector2d(160, 260));
-    bombPick_spawn(vector2d(180, 260));
+    //bombPick_spawn(vector2d(180, 260));
 
     magicBoss_spawn(vector2d(1750, 350));
     al_spawn(vector2d(450, 100));
-
+    */
 
     //level_add_entity(player);
     //level_add_entity(ramp);

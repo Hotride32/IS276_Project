@@ -5,6 +5,18 @@
 #include "camera.h"
 #include "level.h"
 #include "entity.h"
+#include "ramp.h"
+#include "skull.h"
+#include "skeleton.h"
+#include "tower.h"
+#include "magicboss.h"
+#include "al.h"
+#include "angel.h"
+#include "pickup.h"
+#include "breakable.h"
+#include "checkpoint.h"
+#include "monster.h"
+#include "spike.h"
 
 
 static Level gamelevel = { 0 };
@@ -142,6 +154,95 @@ Level *level_load(const char *filename)
         gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h));
     }
     //gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_edge(100, 200, 255, 360)); //for slope
+
+    SJson* spawnList = sj_copy(sj_object_get_value(levelJS, "spawnList"));
+
+    int r = 0, coun = 0, ent = 0;
+    SJson *item;
+    float positionX, positionY;
+    int id = 0;
+    coun  = sj_array_get_count(spawnList);
+    //slog("moncount: %f ", count);
+    
+    for (r = 0; r < count; r++)
+    {
+        //         ent += 1.0f;
+        //          slog("moncount: %f ", ent);
+        item = sj_array_get_nth(spawnList, r);
+        if (!item)continue;
+        sj_get_float_value(sj_object_get_value(item, "position_x"), &positionX);
+        sj_get_float_value(sj_object_get_value(item, "position_y"), &positionY);
+        if (!sj_get_integer_value(sj_object_get_value(item, "name"), &id))
+        {
+            id = 0;
+        }
+        if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")),"bomb") == 0) {
+            //slog("spawn Bomb");
+            bombPick_spawn(vector2d(positionX,positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "axe") == 0) {
+            
+            axePick_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "knife") == 0) {
+
+            knifePick_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "magic") == 0) {
+
+            magic_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "health") == 0) {
+
+            health_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "angel") == 0) {
+
+            angel_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "skull") == 0) {
+
+            skull_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "skeleton") == 0) {
+
+            skeleton_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "slime") == 0) {
+
+            monster_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "tower") == 0) {
+
+            tower_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "al") == 0) {
+
+            al_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "wiz") == 0) {
+
+            magicBoss_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "spike") == 0) {
+
+            spike_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "checkpoint") == 0) {
+
+            checkpoint_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "breakable") == 0) {
+
+            breakable_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "ramp") == 0) {
+
+            ramp_spawn(vector2d(positionX, positionY));
+        }
+
+    }
+
     sj_free(json);
     return level;
 }

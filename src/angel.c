@@ -1,6 +1,7 @@
 #include "angel.h"
 #include "level.h"
 #include "player.h"
+#include "pickup.h"
 #include "simple_logger.h"
 //#include "particle_effects.h"
 #include "entity.h"
@@ -370,6 +371,18 @@ int angel_player_sight_check(Entity *self)
 
 void angel_die(Entity *self)
 {
+    int r = rand() % 4;
+    //slog("%i", r);
+    if (r == 3) {
+        bombPick_spawn(self->position);
+    }
+    else if (r == 2) {
+        health_spawn(self->position);
+    }
+    else if (r == 1) {
+        magic_spawn(self->position);
+    }
+
     level_remove_entity(self);
     entity_free(self);
     /*if (!gf2d_actor_get_frames_remaining(&self->actor))
