@@ -39,9 +39,10 @@ typedef struct Entity_s
     float maxHealth;                        /**<maximum health of entity*/
     float magicPt;
     float  maxMagicPt;
-    int   mag;
-    int   str;
-    int   def;
+    float   mag;
+    float   str;
+    float   jump;
+    float   def;
     float   bombCount;
     float   knifeCount;
     float   axeCount;

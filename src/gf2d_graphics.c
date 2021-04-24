@@ -66,7 +66,7 @@ void gf2d_graphics_initialize(
     gf2d_graphics.main_window = SDL_CreateWindow(windowName,
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
-                             renderWidth, renderHeight,
+                             viewWidth, viewHeight,
                              flags);
 
     if (!gf2d_graphics.main_window)

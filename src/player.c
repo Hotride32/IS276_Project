@@ -41,6 +41,8 @@ SJson* player_to_json(Entity* player)
     sj_object_insert(json, "MP", sj_new_float(player->magicPt));
     sj_object_insert(json, "maxMP", sj_new_float(player->maxMagicPt));
     sj_object_insert(json, "str", sj_new_int(player->str));
+    sj_object_insert(json, "def", sj_new_int(player->def));
+    sj_object_insert(json, "jump", sj_new_int(player->jump));
     sj_object_insert(json, "position_x", sj_new_float(player->spawnPos.x));
     sj_object_insert(json, "position_y", sj_new_float(player->spawnPos.y));
     sj_object_insert(json, "knifeCount", sj_new_float(player->knifeCount));
@@ -93,6 +95,8 @@ Entity *player_spawn(Vector2D position, const char* filename)
     sj_get_float_value(sj_object_get_value(json, "knifeCount"), &ent->knifeCount);
     sj_get_float_value(sj_object_get_value(json, "axeCount"), &ent->axeCount);
     sj_get_float_value(sj_object_get_value(json, "bombCount"), &ent->bombCount);
+    sj_get_float_value(sj_object_get_value(json, "def"), &ent->def);
+    sj_get_float_value(sj_object_get_value(json, "jump"), &ent->jump);
     
 
     //ent->maxMagicPt = 100;
@@ -115,9 +119,11 @@ Entity *player_spawn(Vector2D position, const char* filename)
     //ent->health = ent->maxHealth;
     //ent->maxHealth = 1000;
     //ent->str = 5;
+    //ent->def = 0;
+    //ent->jump = 15;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
-    ent->shape = gf2d_shape_rect(16, 5, 30, 30);
+    ent->shape = gf2d_shape_rect(16, 10, 30, 30);
     gf2d_body_set(
         &ent->body,
         "player",
@@ -171,7 +177,7 @@ void player_update(Entity *self)
     if (!self)return;
     cameraSize = camera_get_dimensions();
     camera.x = (self->position.x + 64) - (cameraSize.x * 0.5);
-    camera.y = (self->position.y + 64) - (cameraSize.y * 0.5);
+    camera.y = (self->position.y - 54) - (cameraSize.y * 0.5);
     camera_set_position(camera);
     // apply dampening on velocity
     vector2d_scale(self->velocity, self->velocity, 0.75);
@@ -236,10 +242,11 @@ void player_think(Entity* self)
         }
         self->frameCount = 50;
         self->jumpcool = 15;
-        self->velocity.y -= 15;
-        //vector2d_scale(thrust, vector2d(0, 1), -15);
-        //vector2d_add(self->velocity, self->velocity, thrust);
-
+        self->velocity.y -= self->jump;
+        /*
+        vector2d_scale(thrust, vector2d(0, 1), -15);
+        vector2d_add(self->velocity, self->velocity, thrust);
+        */
     }
     else if (keys[SDL_SCANCODE_D] && (self->attackcool == 0)) {
         self->frameAnimStart = 7;
@@ -448,7 +455,7 @@ void player_think(Entity* self)
 int  player_damage(Entity* self, int amount, Entity* source)
 {
     //slog("CRUNCH");
-    self->health -= amount;
+    self->health -= amount - self->def;
 
 }
 

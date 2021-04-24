@@ -81,7 +81,7 @@ void checkpoint_set(Entity* self)
         if (!c->body)continue;
         if (!c->body->data)continue;
         other = c->body->data;
-        if (other->damage)other->spawnPos = self->position;//TODO: make this based on weapon / player stats
+        if (other->damage)other->spawnPos = vector2d(self->position.x, self->position.y-5);//TODO: make this based on weapon / player stats
     }
     gf2d_collision_list_free(collisionList);
 }

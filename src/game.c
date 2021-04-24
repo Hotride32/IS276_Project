@@ -61,6 +61,7 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     camera_set_dimensions(vector2d(1200, 720));
+    //camera_set_dimensions(vector2d( 480, 288));
     camera_set_position(vector2d(0, 0));
     gf2d_sprite_init(1024);
     entity_manager_init(100);
@@ -153,6 +154,22 @@ int main(int argc, char * argv[])
             NULL,
             &mouseColor,
             (int)mf);
+        /*
+        gfc_line_sprintf(player_text, "Health : %0.0f/%0.0f ", player->health, player->maxHealth);
+        font_render(font, player_text, vector2d(6, 6), gfc_color8(255, 0, 0, 255));
+
+        gfc_line_sprintf(player_text, "MP : %0.0f/%0.0f ", player->magicPt, player->maxMagicPt);
+        font_render(font, player_text, vector2d(6, 18), gfc_color8(0, 0, 255, 255));
+
+        gfc_line_sprintf(player_text, "Knife : %0.0f ", player->knifeCount);
+        font_render(font, player_text, vector2d(100, 6), gfc_color8(255, 255, 255, 255));
+
+        gfc_line_sprintf(player_text, "Axe : %0.0f ", player->axeCount);
+        font_render(font, player_text, vector2d(200, 6), gfc_color8(255, 255, 255, 255));
+
+        gfc_line_sprintf(player_text, "Bomb : %0.0f ", player->bombCount);
+        font_render(font, player_text, vector2d(300, 6), gfc_color8(255, 255, 255, 255));
+        */
 
         gfc_line_sprintf(player_text, "Health : %0.0f/%0.0f ", player->health, player->maxHealth);
         font_render(font, player_text, vector2d(32, 32), gfc_color8(255, 0, 0, 255));
@@ -168,7 +185,6 @@ int main(int argc, char * argv[])
 
         gfc_line_sprintf(player_text, "Bomb : %0.0f ", player->bombCount);
         font_render(font, player_text, vector2d(800, 32), gfc_color8(255, 255, 255, 255));
-
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
 
         if (keys[SDL_SCANCODE_ESCAPE]) {

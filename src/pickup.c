@@ -11,6 +11,11 @@ void magic_think(Entity* self);
 void knifePick_think(Entity* self);
 void bombPick_think(Entity* self);
 void axePick_think(Entity* self);
+void sword_think(Entity* self);
+void shield_think(Entity* self);
+void mp_think(Entity* self);
+void hp_think(Entity* self);
+void boots_think(Entity* self);
 void pickup_update(Entity *self);
 int  pickup_touch(Entity *self,Entity *other);
 int  pickup_damage(Entity *self,int amount, Entity *source);
@@ -282,6 +287,274 @@ Entity* axePick_spawn(Vector2D position)
 
 }
 
+Entity* shield_spawn(Vector2D position)
+{
+    Entity* ent;
+    ent = entity_new();
+    if (!ent)
+    {
+        slog("failed to create entity for the player");
+        return NULL;
+    }
+    //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
+    ent->sprite = gf2d_sprite_load_all("images/roguelikeitems.png", 16, 16, 13);
+    //ent->laser = gf2d_sprite_load_all("images/Laser_sheet.png", 300, 100, 1);
+
+
+
+    vector2d_copy(ent->position, position);
+    vector2d_copy(ent->spawnPos, position);
+    ent->frameAnimStart = 149;
+    ent->frame = 149;
+    ent->frameRate = 0.1;
+    ent->frameCount = 150;
+    ent->think = shield_think;
+    //ent->draw = pickup_draw;
+    ent->update = pickup_update;
+    ent->touch = pickup_touch;
+    ent->damage = pickup_damage;
+    ent->die = pickup_die;
+    ent->free = level_remove_entity;
+    ent->attackcool = 0;
+    ent->rotation.x = 64;
+    ent->rotation.y = 64;
+    ent->shape = gf2d_shape_rect(0, 0, 16, 16);
+    gf2d_body_set(
+        &ent->body,
+        "shield",
+        1,
+        PICKUP_LAYER,
+        0,
+        1,
+        position,
+        vector2d(0, 0),
+        10,
+        1,
+        0,
+        &ent->shape,
+        ent,
+        NULL);
+
+    level_add_entity(ent);
+    return ent;
+
+}
+
+Entity* sword_spawn(Vector2D position)
+{
+    Entity* ent;
+    ent = entity_new();
+    if (!ent)
+    {
+        slog("failed to create entity for the player");
+        return NULL;
+    }
+    //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
+    ent->sprite = gf2d_sprite_load_all("images/roguelikeitems.png", 16, 16, 13);
+    //ent->laser = gf2d_sprite_load_all("images/Laser_sheet.png", 300, 100, 1);
+
+
+
+    vector2d_copy(ent->position, position);
+    vector2d_copy(ent->spawnPos, position);
+    ent->frameAnimStart = 94;
+    ent->frame = 94;
+    ent->frameRate = 0.1;
+    ent->frameCount = 95;
+    ent->think = sword_think;
+    //ent->draw = pickup_draw;
+    ent->update = pickup_update;
+    ent->touch = pickup_touch;
+    ent->damage = pickup_damage;
+    ent->die = pickup_die;
+    ent->free = level_remove_entity;
+    ent->attackcool = 0;
+    ent->rotation.x = 64;
+    ent->rotation.y = 64;
+    ent->shape = gf2d_shape_rect(0, 0, 16, 16);
+    gf2d_body_set(
+        &ent->body,
+        "sword",
+        1,
+        PICKUP_LAYER,
+        0,
+        1,
+        position,
+        vector2d(0, 0),
+        10,
+        1,
+        0,
+        &ent->shape,
+        ent,
+        NULL);
+
+    level_add_entity(ent);
+    return ent;
+
+}
+
+Entity* hp_spawn(Vector2D position)
+{
+    Entity* ent;
+    ent = entity_new();
+    if (!ent)
+    {
+        slog("failed to create entity for the player");
+        return NULL;
+    }
+    //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
+    ent->sprite = gf2d_sprite_load_all("images/roguelikeitems.png", 16, 16, 13);
+    //ent->laser = gf2d_sprite_load_all("images/Laser_sheet.png", 300, 100, 1);
+
+
+
+    vector2d_copy(ent->position, position);
+    vector2d_copy(ent->spawnPos, position);
+    ent->frameAnimStart = 34;
+    ent->frame = 34;
+    ent->frameRate = 0.1;
+    ent->frameCount = 35;
+    ent->think = hp_think;
+    //ent->draw = pickup_draw;
+    ent->update = pickup_update;
+    ent->touch = pickup_touch;
+    ent->damage = pickup_damage;
+    ent->die = pickup_die;
+    ent->free = level_remove_entity;
+    ent->attackcool = 0;
+    ent->rotation.x = 64;
+    ent->rotation.y = 64;
+    ent->shape = gf2d_shape_rect(0, 0, 16, 16);
+    gf2d_body_set(
+        &ent->body,
+        "health crown",
+        1,
+        PICKUP_LAYER,
+        0,
+        1,
+        position,
+        vector2d(0, 0),
+        10,
+        1,
+        0,
+        &ent->shape,
+        ent,
+        NULL);
+
+    level_add_entity(ent);
+    return ent;
+
+}
+
+Entity* boots_spawn(Vector2D position)
+{
+    Entity* ent;
+    ent = entity_new();
+    if (!ent)
+    {
+        slog("failed to create entity for the player");
+        return NULL;
+    }
+    //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
+    ent->sprite = gf2d_sprite_load_all("images/roguelikeitems.png", 16, 16, 13);
+    //ent->laser = gf2d_sprite_load_all("images/Laser_sheet.png", 300, 100, 1);
+
+
+
+    vector2d_copy(ent->position, position);
+    vector2d_copy(ent->spawnPos, position);
+    ent->frameAnimStart = 148;
+    ent->frame = 148;
+    ent->frameRate = 0.1;
+    ent->frameCount = 149;
+    ent->think = boots_think;
+    //ent->draw = pickup_draw;
+    ent->update = pickup_update;
+    ent->touch = pickup_touch;
+    ent->damage = pickup_damage;
+    ent->die = pickup_die;
+    ent->free = level_remove_entity;
+    ent->attackcool = 0;
+    ent->rotation.x = 64;
+    ent->rotation.y = 64;
+    ent->shape = gf2d_shape_rect(0, 0, 16, 16);
+    gf2d_body_set(
+        &ent->body,
+        "boots",
+        1,
+        PICKUP_LAYER,
+        0,
+        1,
+        position,
+        vector2d(0, 0),
+        10,
+        1,
+        0,
+        &ent->shape,
+        ent,
+        NULL);
+
+    level_add_entity(ent);
+    return ent;
+
+}
+
+Entity* mp_spawn(Vector2D position)
+{
+    Entity* ent;
+    ent = entity_new();
+    if (!ent)
+    {
+        slog("failed to create entity for the player");
+        return NULL;
+    }
+    //ent->sprite = gf2d_sprite_load_all("images/ed210_top.png",128,128,16);
+    ent->sprite = gf2d_sprite_load_all("images/roguelikeitems.png", 16, 16, 13);
+    //ent->laser = gf2d_sprite_load_all("images/Laser_sheet.png", 300, 100, 1);
+
+
+
+    vector2d_copy(ent->position, position);
+    vector2d_copy(ent->spawnPos, position);
+    ent->frameAnimStart = 22;
+    ent->frame = 22;
+    ent->frameRate = 0.1;
+    ent->frameCount = 23;
+    ent->think = mp_think;
+    //ent->draw = pickup_draw;
+    ent->update = pickup_update;
+    ent->touch = pickup_touch;
+    ent->damage = pickup_damage;
+    ent->die = pickup_die;
+    ent->free = level_remove_entity;
+    ent->attackcool = 0;
+    ent->rotation.x = 64;
+    ent->rotation.y = 64;
+    ent->shape = gf2d_shape_rect(0, 0, 16, 16);
+    gf2d_body_set(
+        &ent->body,
+        "magic necklace",
+        1,
+        PICKUP_LAYER,
+        0,
+        1,
+        position,
+        vector2d(0, 0),
+        10,
+        1,
+        0,
+        &ent->shape,
+        ent,
+        NULL);
+
+    level_add_entity(ent);
+    return ent;
+
+}
+
+
+
+
 /*
 Entity *pickup_spawn(Vector2D position,SJson *args)
 {
@@ -490,6 +763,93 @@ void bombPick_think(Entity* self)
         //self->dead = 1;            
     }
 }
+
+void boots_think(Entity* self)
+{
+    Entity* player;
+    player = entity_get_touching_player(self);
+    if (player != NULL)
+    {
+        if (player->jump >= 20) {
+
+        }
+        else {
+            player->jump += 1;
+            level_remove_entity(self);
+            entity_free(self);
+        }
+
+
+
+        //gf2d_sound_play(self->sound[0],0,1,-1,-1);
+        //self->dead = 1;            
+    }
+}
+void shield_think(Entity* self)
+{
+    Entity* player;
+    player = entity_get_touching_player(self);
+    if (player != NULL)
+    {
+        player->def += 10;
+        level_remove_entity(self);
+        entity_free(self);
+
+
+
+        //gf2d_sound_play(self->sound[0],0,1,-1,-1);
+        //self->dead = 1;            
+    }
+}
+void sword_think(Entity* self)
+{
+    Entity* player;
+    player = entity_get_touching_player(self);
+    if (player != NULL)
+    {
+        player->str += 5;
+        level_remove_entity(self);
+        entity_free(self);
+
+
+        //gf2d_sound_play(self->sound[0],0,1,-1,-1);
+        //self->dead = 1;            
+    }
+}
+void hp_think(Entity* self)
+{
+    Entity* player;
+    player = entity_get_touching_player(self);
+    if (player != NULL)
+    {
+            player->maxHealth += 250;
+            player->health = player->maxHealth;
+            level_remove_entity(self);
+            entity_free(self);
+
+
+
+        //gf2d_sound_play(self->sound[0],0,1,-1,-1);
+        //self->dead = 1;            
+    }
+}
+void mp_think(Entity* self)
+{
+    Entity* player;
+    player = entity_get_touching_player(self);
+    if (player != NULL)
+    {
+        
+            player->maxMagicPt += 50;
+            player->magicPt = player->maxMagicPt;
+            level_remove_entity(self);
+            entity_free(self);
+
+        //gf2d_sound_play(self->sound[0],0,1,-1,-1);
+        //self->dead = 1;            
+    }
+}
+
 
 void pickup_update(Entity *self)
 {

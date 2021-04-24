@@ -240,6 +240,26 @@ Level *level_load(const char *filename)
 
             ramp_spawn(vector2d(positionX, positionY));
         }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "boot") == 0) {
+
+            boots_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "shield") == 0) {
+
+            shield_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "sword") == 0) {
+
+            sword_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "HP") == 0) {
+
+            hp_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "MP") == 0) {
+
+            mp_spawn(vector2d(positionX, positionY));
+        }
 
     }
 

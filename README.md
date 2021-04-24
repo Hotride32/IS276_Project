@@ -28,3 +28,20 @@ Once each submodule has been made you can go into the base project src folder an
 `make`
 
 You should now have a `gf2d` binary within the root of your git repository. Executing this will start your game.
+
+
+
+Controls:
+ - A D -> Move Left and Right
+ - S -> Crouch
+ - Space -> Jump
+ - J -> Melee attack 1
+ - J(Held)-> Melee attack 1+2
+ - A or D + J -> Strong melee attack
+ - S + J -> slide attack
+ - K-> Knife projectile (cost 1 knife)
+ - L-> Axe projectile (cost 1 axe)
+ - U-> Bomb projectile (cost 1 bomb)
+ - I-> Fireball Spell (cost 10 MP)
+ - O-> Barrier Spell (cost 25 MP)
+ - P-> Beam Spell (cost 100 MP)
