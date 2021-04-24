@@ -17,6 +17,7 @@
 #include "checkpoint.h"
 #include "monster.h"
 #include "spike.h"
+#include "companion.h"
 
 
 static Level gamelevel = { 0 };
@@ -259,6 +260,18 @@ Level *level_load(const char *filename)
         else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "MP") == 0) {
 
             mp_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "hpfairy") == 0) {
+
+            companion_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "mpfairy") == 0) {
+
+            mpFairy_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "daggerfairy") == 0) {
+
+            daggerFairy_spawn(vector2d(positionX, positionY));
         }
 
     }
