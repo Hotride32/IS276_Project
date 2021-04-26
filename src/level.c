@@ -156,16 +156,16 @@ Level *level_load(const char *filename)
     }
     //gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_edge(100, 200, 255, 360)); //for slope
 
-    SJson* spawnList = sj_copy(sj_object_get_value(levelJS, "spawnList"));
+    SJson* spawnList = sj_copy(sj_object_get_value(levelJS, "spawn"));
 
     int r = 0, coun = 0, ent = 0;
     SJson *item;
     float positionX, positionY;
     int id = 0;
     coun  = sj_array_get_count(spawnList);
-    //slog("moncount: %f ", count);
+    slog("moncount: %i ", coun);
     
-    for (r = 0; r < count; r++)
+    for (r = 0; r < coun; r++)
     {
         //         ent += 1.0f;
         //          slog("moncount: %f ", ent);
@@ -178,7 +178,7 @@ Level *level_load(const char *filename)
             id = 0;
         }
         if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")),"bomb") == 0) {
-            //slog("spawn Bomb");
+            slog("spawn Bomb");
             bombPick_spawn(vector2d(positionX,positionY));
         }
         else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "axe") == 0) {
