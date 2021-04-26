@@ -856,7 +856,7 @@ void pickup_update(Entity *self)
     entity_apply_gravity(self);
     self->velocity.y += .75;
     self->attackcool += 1;
-    if (self->attackcool >= 1000) {
+    if (self->attackcool >= 3000) {
         level_remove_entity(self);
         entity_free(self);
     }
