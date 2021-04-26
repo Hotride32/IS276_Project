@@ -151,4 +151,6 @@ void entity_damage(Entity* target, Entity* killer, int damage, float kick);
 
 Entity* entity_get_touching_player(Entity* self);
 
+void gf2d_entity_free_all();
+
 #endif

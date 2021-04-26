@@ -39,7 +39,7 @@ Level *level_new();
 
 Level level_get();
 
-
+void level_clear();
 
 /**
  * @brief load a level from a json file

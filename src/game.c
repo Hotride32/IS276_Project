@@ -32,16 +32,38 @@
 #include "windows_common.h"
 
 static int _done = 0;
+static int changer = 1;
 static Window* _quit = NULL;
+static Window* mainWin = NULL;
+static Level* level = NULL;
+static Entity* player = NULL;
 
 void onCancel(void* data)
 {
     _quit = NULL;
 }
-void onExit(void* data)
+void onCancel2(void* data)
 {
     _done = 1;
+    mainWin = NULL;
+}
+void onOK(void* data)
+{
+    mainWin = NULL;
+    changer = 0;
+    level = level_load("levels/exampleLevel.json");
+    player = player_spawn(vector2d(100, 435), "levels/player.json");
+}
+void onExit(void* data)
+{
+    //_done = 1;
+    //level_free(level);
+    level_clear();
+    mainWin = window_yes_no_level("Choose Level", onOK, onCancel2, NULL, NULL);
+    gf2d_entity_free_all();
+    camera_set_position(vector2d(0, 0));
     _quit = NULL;
+    changer = 1;
 
 }
 
@@ -50,7 +72,7 @@ int main(int argc, char * argv[])
     /*variable declarations*/
     //int done = 0;
     const Uint8 * keys;
-    Level *level;
+    //Level *level;
     Font* font;
     TextLine player_text;
     TextLine MP_text;
@@ -123,7 +145,9 @@ int main(int argc, char * argv[])
     
     /*demo setup*/
     //mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
-    level = level_load("levels/exampleLevel.json");
+
+    //level = level_load("levels/exampleLevel.json");
+
     /*
     ramp_spawn(vector2d(224, 450));
     breakable_spawn(vector2d(600, 444));
@@ -131,7 +155,10 @@ int main(int argc, char * argv[])
     checkpoint_spawn(vector2d(450, 444));
     checkpoint_spawn(vector2d(150, 444));*/
     //Entity* monster = monster_spawn(vector2d(700, 444));
-    Entity* player = player_spawn(vector2d(100, 435),"levels/player.json");
+    //Entity* player = NULL;
+    //player = player_spawn(vector2d(100, 435), "levels/player.json");
+
+
     /*monster_spawn(vector2d(700, 435));
     skull_spawn(vector2d(400, 300));
     skeleton_spawn(vector2d(800, 400));
@@ -146,7 +173,9 @@ int main(int argc, char * argv[])
     magicBoss_spawn(vector2d(1750, 350));
     al_spawn(vector2d(450, 100));
     */
-
+    if (changer == 1) {
+        mainWin = window_yes_no_level("Choose Level", onOK, onCancel2, NULL, NULL);
+    }
     //level_add_entity(player);
     //level_add_entity(ramp);
     
@@ -173,14 +202,14 @@ int main(int argc, char * argv[])
         gf2d_windows_update_all();
 
         gf2d_mouse_update();
-
-        entity_manager_think_entities();
-        entity_manager_update_entities();
-
+        if (changer == 0) {
+            entity_manager_think_entities();
+            entity_manager_update_entities();
+        }
         //camera_set_position(player->position);
-
-        level_update(level);
-
+        if (changer == 0) {
+            level_update(level);
+        }
 
         //entity_manager_update_entities();
 
@@ -188,14 +217,14 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
         gf2d_sprite_draw_image(background, vector2d(0, 0));
-
-        level_draw(level);
-
+        if (changer == 0) {
+            level_draw(level);
+        }
         //entity_manager_update_entities();
 
-
-        entity_manager_draw_entities();
-
+        if (changer == 0) {
+            entity_manager_draw_entities();
+        }
         //UI elements last
 
         //gf2d_draw_rect(gf2d_rect_to_sdl_rect(gf2d_rect(0, 0, 1200, 70)), gfc_color8(0, 0, 0, 255));
@@ -227,35 +256,42 @@ int main(int argc, char * argv[])
         font_render(font, player_text, vector2d(300, 6), gfc_color8(255, 255, 255, 255));
         */
 
-        /*
-        gfc_line_sprintf(player_text, "Health : %0.0f/%0.0f ", player->health, player->maxHealth);
-        gf2d_font_draw_line(player_text, font, gfc_color8(255, 0, 0, 255), vector2d(32, 32));
+        if (changer == 0) {
+            gfc_line_sprintf(player_text, "Health : %0.0f/%0.0f ", player->health, player->maxHealth);
+            gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 0, 0, 255), vector2d(32, 32));
 
-        gfc_line_sprintf(player_text, "MP : %0.0f/%0.0f ", player->magicPt, player->maxMagicPt);
-       // font_render(font, player_text, vector2d(32, 64), gfc_color8(0, 0, 255, 255));
-        gf2d_font_draw_line(player_text, font, gfc_color8(0, 0, 255, 255), vector2d(32, 64));
+            gfc_line_sprintf(player_text, "MP : %0.0f/%0.0f ", player->magicPt, player->maxMagicPt);
+            // font_render(font, player_text, vector2d(32, 64), gfc_color8(0, 0, 255, 255));
+            gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(0, 0, 255, 255), vector2d(32, 64));
 
-        gfc_line_sprintf(player_text, "Knife : %0.0f ", player->knifeCount);
-       // font_render(font, player_text, vector2d(400, 32), gfc_color8(255, 255, 255, 255));
-        gf2d_font_draw_line(player_text, font, gfc_color8(255, 255, 255, 255), vector2d(400, 32));
+            gfc_line_sprintf(player_text, "Knife : %0.0f ", player->knifeCount);
+            // font_render(font, player_text, vector2d(400, 32), gfc_color8(255, 255, 255, 255));
+            gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 255, 255, 255), vector2d(400, 32));
 
-        gfc_line_sprintf(player_text, "Axe : %0.0f ", player->axeCount);
-       // font_render(font, player_text, vector2d(600, 32), gfc_color8(255, 255, 255, 255));
-        gf2d_font_draw_line(player_text, font, gfc_color8(255, 255, 255, 255), vector2d(600, 32));
+            gfc_line_sprintf(player_text, "Axe : %0.0f ", player->axeCount);
+            // font_render(font, player_text, vector2d(600, 32), gfc_color8(255, 255, 255, 255));
+            gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 255, 255, 255), vector2d(600, 32));
 
-        gfc_line_sprintf(player_text, "Bomb : %0.0f ", player->bombCount);
-        //font_render(font, player_text, vector2d(800, 32), gfc_color8(255, 255, 255, 255));
-        gf2d_font_draw_line(player_text, font, gfc_color8(255, 255, 255, 255), vector2d(800, 32));
-        */
-        gf2d_font_draw_line_tag("Press F4 to quit!", FT_H1, gfc_color(255, 255, 255, 255), vector2d(0, 0));
+            gfc_line_sprintf(player_text, "Bomb : %0.0f ", player->bombCount);
+            //font_render(font, player_text, vector2d(800, 32), gfc_color8(255, 255, 255, 255));
+            gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 255, 255, 255), vector2d(800, 32));
+
+            gfc_line_sprintf(player_text, "Bomb : %0.0f ", player->bombCount);
+            gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 255, 255, 255), vector2d(800, 32));
+        }
+
         gf2d_windows_draw_all();
         gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
-        if ((gfc_input_command_down("exit")) && (_quit == NULL))
+
+
+        if ((gfc_input_command_down("exit")) && (_quit == NULL) && (mainWin == NULL))
         {
             _quit = window_yes_no("Exit?", onExit, onCancel, NULL, NULL);
-            player_save(player, "levels/player.json");
+            if (player) {
+                player_save(player, "levels/player.json");
+            }
         }
         /*
         if (keys[SDL_SCANCODE_ESCAPE]) {

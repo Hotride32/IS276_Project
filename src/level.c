@@ -27,6 +27,21 @@ Level level_get()
     return gamelevel;
 }
 
+void level_clear()
+{
+    gf2d_space_free(gamelevel.space);
+    gf2d_sprite_free(gamelevel.bgImage);
+    gf2d_sprite_free(gamelevel.tileSet);
+    //gf2d_sprite_free(gamelevel.tileLayer);
+    //gf2d_particle_emitter_free(gamelevel.pe);
+    /*if (gamelevel.backgroundMusic)
+    {
+        Mix_FreeMusic(gamelevel.backgroundMusic);
+    }*/
+    memset(&gamelevel, 0, sizeof(Level));
+    slog("level cleared");
+}
+
 Level *level_new()
 {
     Level *level;
