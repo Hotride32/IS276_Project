@@ -54,11 +54,19 @@ void onOK(void* data)
     level = level_load("levels/exampleLevel.json");
     player = player_spawn(vector2d(100, 435), "levels/player.json");
 }
+void onExit2(void* data) {
+    mainWin = NULL;
+    changer = 0;
+    level = level_load("levels/Level1.json");
+    player = player_spawn(vector2d(100, 435), "levels/player.json");
+
+}
 void onExit(void* data)
 {
     //_done = 1;
     //level_free(level);
-    level_clear();
+    //level_clear();
+    level = NULL;
     mainWin = window_yes_no_level("Choose Level", onOK, onCancel2, NULL, NULL);
     gf2d_entity_free_all();
     camera_set_position(vector2d(0, 0));
@@ -298,7 +306,8 @@ int main(int argc, char * argv[])
             player_save(player, "levels/player.json");
         _done = 1; // exit condition
 
-        }*/
+        }
+        */
 //        slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
