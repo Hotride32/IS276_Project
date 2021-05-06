@@ -22,6 +22,7 @@
 #include "checkpoint.h"
 #include "monster.h"
 #include "spike.h"
+#include "tile.h"
 #include "level.h"
 #include "gf2d_space.h"
 #include "gf2d_collision.h"
@@ -92,6 +93,8 @@ int main(int argc, char * argv[])
 
     int mx,my;
     float mf = 0;
+    float cool = 0;
+    
     
     Space* space = NULL;
     Collision collision;
@@ -133,11 +136,11 @@ int main(int argc, char * argv[])
     gf2d_font_init("config/font.cfg");
     gfc_input_init("config/input.cfg");
     gf2d_windows_init(128);
-    entity_manager_init(100);
+    entity_manager_init(500);
     //font_init(10);
 
     camera_set_dimensions(vector2d(1200, 700));
-    background = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+    background = gf2d_sprite_load_image("images/backgrounds/background_dark.png");
     
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -206,6 +209,9 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx, &my);
         mf += 0.1;
         if (mf >= 16.0)mf = 0;
+        if (cool > 0) {
+            cool -= 1;
+        }
 
         gf2d_windows_update_all();
 
@@ -283,9 +289,16 @@ int main(int argc, char * argv[])
             gfc_line_sprintf(player_text, "Bomb : %0.0f ", player->bombCount);
             //font_render(font, player_text, vector2d(800, 32), gfc_color8(255, 255, 255, 255));
             gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 255, 255, 255), vector2d(800, 32));
+            
+            if (keys[SDL_SCANCODE_V] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                tile_spawn(mouse);
+                cool = 60;
+            }
 
-            gfc_line_sprintf(player_text, "Bomb : %0.0f ", player->bombCount);
-            gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 255, 255, 255), vector2d(800, 32));
         }
 
         gf2d_windows_draw_all();

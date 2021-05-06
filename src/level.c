@@ -18,6 +18,7 @@
 #include "monster.h"
 #include "spike.h"
 #include "companion.h"
+#include "tile.h"
 
 
 static Level gamelevel = { 0 };
@@ -287,6 +288,10 @@ Level *level_load(const char *filename)
         else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "daggerfairy") == 0) {
 
             daggerFairy_spawn(vector2d(positionX, positionY));
+        }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "tile") == 0) {
+
+            tile_spawn(vector2d(positionX, positionY));
         }
 
     }

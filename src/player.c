@@ -27,6 +27,7 @@ Entity* player_get()
 SJson* player_to_json(Entity* player)
 {
     SJson* json;
+    
     //PlayerData* pd = NULL;
     if (!player)return NULL;
 
@@ -48,6 +49,8 @@ SJson* player_to_json(Entity* player)
     sj_object_insert(json, "knifeCount", sj_new_float(player->knifeCount));
     sj_object_insert(json, "axeCount", sj_new_float(player->axeCount));
     sj_object_insert(json, "bombCount", sj_new_float(player->bombCount));
+
+    
 
     return json;
 }
@@ -455,8 +458,9 @@ void player_think(Entity* self)
 int  player_damage(Entity* self, int amount, Entity* source)
 {
     //slog("CRUNCH");
-    self->health -= amount - self->def;
-
+    if (amount - self->def > 0) {
+        self->health -= (amount - self->def);
+    }
 }
 
 

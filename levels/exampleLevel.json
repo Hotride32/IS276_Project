@@ -49,6 +49,7 @@
 		  {"name":"breakable","position_x":"600.000000","position_y":"444.000000"},
 		  {"name":"ramp","position_x":"224.000000","position_y":"450.000000"},
 		  {"name":"al","position_x":"450.000000","position_y":"100.000000"},
+		  {"name":"tile","position_x":"32.000000","position_y":"32.000000"},
 		  {"name":"wiz","position_x":"1750.000000","position_y":"350.000000"}
 		  
 		
