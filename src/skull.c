@@ -19,6 +19,28 @@ void skull_think_patroling(Entity *self);
 
 //Entity *skull_new(Vector2D position,char *actorFile);
 
+SJson* skull_to_json(Entity* skull)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!skull)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("skull"));
+    sj_object_insert(json, "position_x", sj_new_float(skull->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(skull->position.y));
+
+
+
+    return json;
+}
+
 Entity *skull_spawn(Vector2D position)
 {
     Entity* ent;
@@ -41,6 +63,7 @@ Entity *skull_spawn(Vector2D position)
     ent->frameRate = 0.1;
     ent->frameCount = 15;
     ent->think = skull_think_patroling;
+    ent->save = skull_to_json;
     //ent->think = skull_think_hunting;
     //ent->draw = skull_draw;
     ent->update = skull_update;

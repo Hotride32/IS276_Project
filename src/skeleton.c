@@ -18,6 +18,28 @@ void skeleton_turn(Entity *self,int dir);
 void skeleton_think_patroling(Entity *self);
 
 //Entity *skeleton_new(Vector2D position,char *actorFile);
+SJson* skeleton_to_json(Entity* skeleton)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!skeleton)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("skeleton"));
+    sj_object_insert(json, "position_x", sj_new_float(skeleton->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(skeleton->position.y));
+
+
+
+    return json;
+}
+
 
 Entity *skeleton_spawn(Vector2D position)
 {
@@ -47,6 +69,7 @@ Entity *skeleton_spawn(Vector2D position)
     ent->update = skeleton_update;
     //ent->touch = skeleton_touch;
     ent->damage = skeleton_damage;
+    ent->save = skeleton_to_json;
     //ent->die = skeleton_die;
     ent->health = 50;
     ent->maxHealth = 50;

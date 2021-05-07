@@ -18,6 +18,29 @@ void tower_think_patroling(Entity *self);
 
 //Entity *tower_new(Vector2D position,char *actorFile);
 
+SJson* tower_to_json(Entity* tower)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!tower)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("tower"));
+    sj_object_insert(json, "position_x", sj_new_float(tower->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(tower->position.y));
+
+
+
+    return json;
+}
+
+
 Entity *tower_spawn(Vector2D position)
 {
     Entity* ent;
@@ -40,6 +63,7 @@ Entity *tower_spawn(Vector2D position)
     ent->frameRate = 0.1;
     ent->frameCount = 5;
     ent->think = tower_think_patroling;
+    ent->save = tower_to_json;
     //ent->think = tower_think_hunting;
     //ent->draw = tower_draw;
     ent->update = tower_update;

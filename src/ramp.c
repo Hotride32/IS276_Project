@@ -17,6 +17,28 @@ Entity* player_get()
 }
 */
 
+SJson* ramp_to_json(Entity* ramp)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!ramp)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("ramp"));
+    sj_object_insert(json, "position_x", sj_new_float(ramp->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(ramp->position.y));
+
+
+
+    return json;
+}
+
 Entity *ramp_spawn(Vector2D position)
 {
     Entity *ent;
@@ -38,6 +60,7 @@ Entity *ramp_spawn(Vector2D position)
    // ent->think = ramp_think;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
+    ent->save = ramp_to_json;
     ent->shape = gf2d_shape_edge(position.x-5, position.y+32, position.x+32, position.y-2);
     
     Level game = level_get();

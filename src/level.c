@@ -194,7 +194,7 @@ Level *level_load(const char *filename)
             id = 0;
         }
         if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")),"bomb") == 0) {
-            slog("spawn Bomb");
+            //slog("spawn Bomb");
             bombPick_spawn(vector2d(positionX,positionY));
         }
         else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "axe") == 0) {

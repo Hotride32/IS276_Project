@@ -17,6 +17,28 @@ Entity* player_get()
 }
 */
 
+SJson* tile_to_json(Entity* tile)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!tile)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("tile"));
+    sj_object_insert(json, "position_x", sj_new_float(tile->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(tile->position.y));
+
+
+
+    return json;
+}
+
 Entity *tile_spawn(Vector2D position)
 {
     Entity *ent;
@@ -34,6 +56,7 @@ Entity *tile_spawn(Vector2D position)
     ent->frame = 2;
     ent->frameRate = 0.1;
     ent->frameCount = 3;
+    ent->save = tile_to_json;
     //ent->update = tile_update;
    // ent->think = tile_think;
     ent->rotation.x = 64;

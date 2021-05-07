@@ -18,6 +18,28 @@ void al_think_patroling(Entity *self);
 
 //Entity *al_new(Vector2D position,char *actorFile);
 
+SJson* al_to_json(Entity* al)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!al)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("al"));
+    sj_object_insert(json, "position_x", sj_new_float(al->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(al->position.y));
+
+
+
+    return json;
+}
+
 Entity *al_spawn(Vector2D position)
 {
     Entity* ent;
@@ -40,6 +62,7 @@ Entity *al_spawn(Vector2D position)
     ent->frameRate = 0.1;
     ent->frameCount = 6;
     ent->think = al_think_patroling;
+    ent->save = al_to_json;
     //ent->think = al_think_hunting;
     //ent->draw = al_draw;
     ent->update = al_update;

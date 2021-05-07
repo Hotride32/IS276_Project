@@ -19,6 +19,28 @@ void monster_think_patroling(Entity *self);
 
 //Entity *monster_new(Vector2D position,char *actorFile);
 
+SJson* slime_to_json(Entity* slime)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!slime)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("slime"));
+    sj_object_insert(json, "position_x", sj_new_float(slime->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(slime->position.y));
+
+
+
+    return json;
+}
+
 Entity *monster_spawn(Vector2D position)
 {
     Entity* ent;
@@ -44,6 +66,7 @@ Entity *monster_spawn(Vector2D position)
     //ent->think = monster_think_hunting;
     //ent->draw = monster_draw;
     ent->update = monster_update;
+    ent->save = slime_to_json;
     //ent->touch = monster_touch;
     ent->damage = monster_damage;
     //ent->die = monster_die;

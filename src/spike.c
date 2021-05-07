@@ -17,6 +17,28 @@ Entity* player_get()
 }
 */
 
+SJson* spike_to_json(Entity* spike)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!spike)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("spike"));
+    sj_object_insert(json, "position_x", sj_new_float(spike->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(spike->position.y));
+
+
+
+    return json;
+}
+
 Entity* spike_spawn(Vector2D position)
 {
     Entity* ent;
@@ -36,6 +58,7 @@ Entity* spike_spawn(Vector2D position)
     ent->frameCount = 1;
     ent->update = spike_update;
     ent->think = spike_think;
+    ent->save = spike_to_json;
     //ent->flip = flip;
     ent->rotation.x = 64;
     ent->rotation.y = 64;

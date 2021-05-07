@@ -25,6 +25,28 @@ Entity *breakable_spawn(Vector2D position)
 }
 */
 
+SJson* breakable_to_json(Entity* breakable)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!breakable)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("breakable"));
+    sj_object_insert(json, "position_x", sj_new_float(breakable->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(breakable->position.y));
+
+
+
+    return json;
+}
+
 Entity* breakable_spawn(Vector2D position)
 {
     Entity* ent;
@@ -52,6 +74,7 @@ Entity* breakable_spawn(Vector2D position)
     ent->maxHealth = 1;
 
     ent->think = breakable_think;
+    ent->save = breakable_to_json;
     //ent->draw = breakable_draw;
     ent->update = breakable_update;
     ent->touch = breakable_touch;

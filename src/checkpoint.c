@@ -17,6 +17,28 @@ Entity* player_get()
 }
 */
 
+SJson* checkpoint_to_json(Entity* checkpoint)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!checkpoint)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("checkpoint"));
+    sj_object_insert(json, "position_x", sj_new_float(checkpoint->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(checkpoint->position.y));
+
+
+
+    return json;
+}
+
 Entity* checkpoint_spawn(Vector2D position)
 {
     Entity* ent;
@@ -36,6 +58,7 @@ Entity* checkpoint_spawn(Vector2D position)
     ent->frameCount = 220;
     ent->update = checkpoint_update;
     ent->think = checkpoint_think;
+    ent->save = checkpoint_to_json;
     //ent->flip = flip;
     ent->rotation.x = 64;
     ent->rotation.y = 64;

@@ -18,6 +18,29 @@ void magicBoss_think_patroling(Entity *self);
 
 //Entity *magicBoss_new(Vector2D position,char *actorFile);
 
+SJson* wiz_to_json(Entity* wiz)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!wiz)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("wiz"));
+    sj_object_insert(json, "position_x", sj_new_float(wiz->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(wiz->position.y));
+
+
+
+    return json;
+}
+
+
 Entity *magicBoss_spawn(Vector2D position)
 {
     Entity* ent;
@@ -40,6 +63,7 @@ Entity *magicBoss_spawn(Vector2D position)
     ent->frameRate = 0.1;
     ent->frameCount = 8;
     ent->think = magicBoss_think_patroling;
+    ent->save = wiz_to_json;
     //ent->think = magicBoss_think_hunting;
     //ent->draw = magicBoss_draw;
     ent->update = magicBoss_update;

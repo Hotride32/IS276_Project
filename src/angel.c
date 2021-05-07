@@ -19,6 +19,28 @@ void angel_think_patroling(Entity *self);
 
 //Entity *angel_new(Vector2D position,char *actorFile);
 
+SJson* angel_to_json(Entity* angel)
+{
+    SJson* json;
+
+    //PlayerData* pd = NULL;
+    if (!angel)return NULL;
+
+    json = sj_object_new();
+    if (!json)return NULL;
+
+    //pd = (PlayerData*)player->data;
+    //vector2d_copy(pd->position, player->position);
+
+    sj_object_insert(json, "name", sj_new_str("angel"));
+    sj_object_insert(json, "position_x", sj_new_float(angel->position.x));
+    sj_object_insert(json, "position_y", sj_new_float(angel->position.y));
+
+
+
+    return json;
+}
+
 Entity *angel_spawn(Vector2D position)
 {
     Entity* ent;
@@ -41,6 +63,7 @@ Entity *angel_spawn(Vector2D position)
     ent->frameRate = 0.1;
     ent->frameCount = 7;
     ent->think = angel_think_patroling;
+    ent->save = angel_to_json;
     //ent->think = angel_think_hunting;
     //ent->draw = angel_draw;
     ent->update = angel_update;
