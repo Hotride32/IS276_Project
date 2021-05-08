@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "simple_json.h"
 #include "simple_logger.h"
 #include "camera.h"
 #include "entity.h"
@@ -206,6 +207,21 @@ void gf2d_entity_free_all()
         if (entity_manager.entity_list[i]._inuse == 0)continue;
         entity_free(&entity_manager.entity_list[i]);
     }
+}
+
+void gf2d_entity_save_all(char* filename)
+{
+    int i;
+    SJson* json = sj_array_new();
+    for (i = 0; i < entity_manager.max_entities; i++)
+    {
+        if (entity_manager.entity_list[i]._inuse == 0)continue;
+        slog("added");
+        sj_array_append(json,entity_manager.entity_list[i].save(&entity_manager.entity_list[i]));
+    }
+
+    if (!json)return;
+    sj_save(json, filename);
 }
 
 

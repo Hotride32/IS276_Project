@@ -20,7 +20,7 @@ Entity* player_get()
 SJson* tile_to_json(Entity* tile)
 {
     SJson* json;
-
+    slog("tile");
     //PlayerData* pd = NULL;
     if (!tile)return NULL;
 

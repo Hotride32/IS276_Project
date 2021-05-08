@@ -35,6 +35,7 @@
 static int _done = 0;
 static int changer = 1;
 static Window* _quit = NULL;
+static Window* edit = NULL;
 static Window* mainWin = NULL;
 static Level* level = NULL;
 static Entity* player = NULL;
@@ -55,18 +56,31 @@ void onOK(void* data)
     level = level_load("levels/exampleLevel.json");
     player = player_spawn(vector2d(100, 435), "levels/player.json");
 }
-void onExit2(void* data) {
-    mainWin = NULL;
-    changer = 0;
+void onOK2(void* data) {
+    
+    level = NULL;
+    gf2d_entity_free_all();
+    camera_set_position(vector2d(0, 0));
     level = level_load("levels/Level1.json");
-    player = player_spawn(vector2d(100, 435), "levels/player.json");
+    edit = NULL;
+    changer = 2;
+    //player = player_spawn(vector2d(100, 435), "levels/player.json");
 
+}
+void onCancel3(void* data)
+{
+    //edit = NULL;
+    changer = 1;
+    mainWin = window_yes_no_level("Choose Level", onOK, onCancel2, NULL, NULL);
 }
 void onExit(void* data)
 {
     //_done = 1;
     //level_free(level);
     //level_clear();
+    if (player) {
+        player_save(player, "levels/player.json");
+    }
     level = NULL;
     mainWin = window_yes_no_level("Choose Level", onOK, onCancel2, NULL, NULL);
     gf2d_entity_free_all();
@@ -221,7 +235,7 @@ int main(int argc, char * argv[])
             entity_manager_update_entities();
         }
         //camera_set_position(player->position);
-        if (changer == 0) {
+        if (changer != 1) {
             level_update(level);
         }
 
@@ -231,12 +245,12 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
         gf2d_sprite_draw_image(background, vector2d(0, 0));
-        if (changer == 0) {
+        if (changer != 1) {
             level_draw(level);
         }
         //entity_manager_update_entities();
 
-        if (changer == 0) {
+        if (changer != 1) {
             entity_manager_draw_entities();
         }
         //UI elements last
@@ -301,19 +315,132 @@ int main(int argc, char * argv[])
 
         }
 
+        if (changer == 2) {
+
+            if (keys[SDL_SCANCODE_V] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                monster_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_B] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                skull_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_N] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                skeleton_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_H] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                tower_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_J] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                angel_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_K] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                magicBoss_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_L] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                al_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_Y] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                ramp_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_U] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                spike_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_I] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                breakable_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_O] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                checkpoint_spawn(mouse);
+                cool = 60;
+            }
+            if (keys[SDL_SCANCODE_P] && cool == 0) {
+                Vector2D offset = camera_get_offset();
+                Vector2D mouse = gf2d_mouse_get_position();
+                mouse.x -= offset.x;
+                mouse.y -= offset.y;
+                tile_spawn(mouse);
+                cool = 60;
+            }
+
+            if (keys[SDL_SCANCODE_S]) {
+                gf2d_entity_save_all("levels/editor/spawnlist.json");
+                cool = 60;
+            }
+        }
+
         gf2d_windows_draw_all();
         gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
 
 
-        if ((gfc_input_command_down("exit")) && (_quit == NULL) && (mainWin == NULL))
+        if ((gfc_input_command_down("exit")) && (_quit == NULL) && (mainWin == NULL) && (edit == NULL))
         {
             _quit = window_yes_no("Exit?", onExit, onCancel, NULL, NULL);
             if (player) {
                 player_save(player, "levels/player.json");
             }
         }
+
+        if((keys[SDL_SCANCODE_E]) && (_quit == NULL) && (edit == NULL) && (mainWin == NULL))
+        {
+            //mainWin = NULL;
+            edit = window_yes_no("Open Editor?", onOK2, onCancel3, NULL, NULL);
+          
+        }
+
         /*
         if (keys[SDL_SCANCODE_ESCAPE]) {
             player_save(player, "levels/player.json");
