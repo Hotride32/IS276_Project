@@ -26,7 +26,7 @@
         ]
 		"spawn" : [
 		  {"name":"bomb","position_x":"-180.000000","position_y":"-260.000000"}
-		  
+		  {"name":"al","position_x":"577.000000","position_y":"421.000000"}
 		
 		]
     }

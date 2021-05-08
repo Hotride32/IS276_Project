@@ -38,6 +38,7 @@ static Window* _quit = NULL;
 static Window* edit = NULL;
 static Window* mainWin = NULL;
 static Level* level = NULL;
+//static Level* level2 = NULL;
 static Entity* player = NULL;
 
 void onCancel(void* data)
@@ -53,12 +54,14 @@ void onOK(void* data)
 {
     mainWin = NULL;
     changer = 0;
-    level = level_load("levels/exampleLevel.json");
+    level = level_load("levels/Level1.json");
+    //level2 = level_loadRoom("levels/Level1.json",768.0);
     player = player_spawn(vector2d(100, 435), "levels/player.json");
 }
 void onOK2(void* data) {
     
     level = NULL;
+    player = NULL;
     gf2d_entity_free_all();
     camera_set_position(vector2d(0, 0));
     level = level_load("levels/Level1.json");
@@ -78,10 +81,13 @@ void onExit(void* data)
     //_done = 1;
     //level_free(level);
     //level_clear();
-    if (player) {
+    if (player && changer == 0) {
         player_save(player, "levels/player.json");
     }
     level = NULL;
+    //level_clear();
+    //level_free(level);
+    //level2 = NULL;
     mainWin = window_yes_no_level("Choose Level", onOK, onCancel2, NULL, NULL);
     gf2d_entity_free_all();
     camera_set_position(vector2d(0, 0));
@@ -247,6 +253,7 @@ int main(int argc, char * argv[])
         gf2d_sprite_draw_image(background, vector2d(0, 0));
         if (changer != 1) {
             level_draw(level);
+            //level_draw(level2);
         }
         //entity_manager_update_entities();
 
@@ -429,12 +436,12 @@ int main(int argc, char * argv[])
         if ((gfc_input_command_down("exit")) && (_quit == NULL) && (mainWin == NULL) && (edit == NULL))
         {
             _quit = window_yes_no("Exit?", onExit, onCancel, NULL, NULL);
-            if (player) {
+            /*if (player) {
                 player_save(player, "levels/player.json");
-            }
+            }*/
         }
 
-        if((keys[SDL_SCANCODE_E]) && (_quit == NULL) && (edit == NULL) && (mainWin == NULL))
+        if((keys[SDL_SCANCODE_E]) && (_quit == NULL) && (edit == NULL) && (mainWin == NULL) && (changer != 2))
         {
             //mainWin = NULL;
             edit = window_yes_no("Open Editor?", onOK2, onCancel3, NULL, NULL);

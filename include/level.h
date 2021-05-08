@@ -7,14 +7,15 @@
 #include "gf2d_sprite.h"
 #include "gf2d_space.h"
 #include "entity.h"
-
+#include "room.h"
+/*
 typedef enum
 {
     TT_Empty,
     TT_Brick,
     TT_
-}TileTypes;
-
+}TileTypes2;
+*/
 typedef struct
 {
     Sprite     *bgImage;     /**<the background image for the level*/
@@ -27,7 +28,11 @@ typedef struct
     int         tileWidth;   /**<now many pixels wide the tiles are*/
     int         tileHeight;  /**<how many pixels tall each tile is*/
     int         tileFPL;
+    float       leveloffset;
     Space       *space;
+    Room*       level_list;   
+    Uint32      max_level;
+    Bool       _inuse;
 }Level;
 
 
@@ -47,6 +52,8 @@ void level_clear();
  * @return NULL on error (See the logs) a loaded level otherwise
  */
 Level *level_load(const char *filename);
+
+Level* level_loadRoom(const char* filename, float offsetForRoom);
 
 /**
  * @brief free up a previously loaded level
