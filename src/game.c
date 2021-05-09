@@ -4,6 +4,7 @@
 
 #include "simple_logger.h"
 #include "gfc_input.h"
+#include "gfc_audio.h"
 
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
@@ -148,6 +149,7 @@ int main(int argc, char * argv[])
         fullscreen,
         debug);
     gf2d_graphics_set_frame_delay(16);
+    gfc_audio_init(256, 16, 4, 1, 1, 1);
     //camera_set_dimensions(vector2d(1200, 720));
     //camera_set_dimensions(vector2d( 480, 288));
     camera_set_position(vector2d(0, 0));
@@ -161,7 +163,9 @@ int main(int argc, char * argv[])
 
     camera_set_dimensions(vector2d(1200, 700));
     background = gf2d_sprite_load_image("images/backgrounds/background_dark.png");
-    
+    Sound* bgm = gfc_sound_load("music/bensound-betterdays.mp3", 1.0, 1);
+    gfc_sound_play(bgm, 10000, 1.0, -1, -1);
+
     SDL_ShowCursor(SDL_DISABLE);
 
     gf2d_mouse_load("actors/mouse.actor");
