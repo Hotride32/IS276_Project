@@ -55,9 +55,9 @@ void onOK(void* data)
 {
     mainWin = NULL;
     changer = 0;
-    level = level_load("levels/Level1.json");
+    level = level_load("levels/Level1.json",0);
     //level2 = level_loadRoom("levels/Level1.json",768.0);
-    player = player_spawn(vector2d(100, 435), "levels/player.json");
+    player = player_spawn(vector2d(100, 439), "levels/player.json");
 }
 void onOK2(void* data) {
     
@@ -65,7 +65,7 @@ void onOK2(void* data) {
     player = NULL;
     gf2d_entity_free_all();
     camera_set_position(vector2d(0, 0));
-    level = level_load("levels/Level1.json");
+    level = level_load("levels/Level1.json",1);
     edit = NULL;
     changer = 2;
     //player = player_spawn(vector2d(100, 435), "levels/player.json");
@@ -295,7 +295,10 @@ int main(int argc, char * argv[])
         font_render(font, player_text, vector2d(300, 6), gfc_color8(255, 255, 255, 255));
         */
 
-        if (changer == 0) {
+        if (changer == 0 && player != NULL) {
+
+            player = player_get();
+
             gfc_line_sprintf(player_text, "Health : %0.0f/%0.0f ", player->health, player->maxHealth);
             gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 0, 0, 255), vector2d(32, 32));
 

@@ -19,6 +19,7 @@
 #include "spike.h"
 #include "companion.h"
 #include "tile.h"
+#include "door.h"
 //#include "room.h"
 
 
@@ -58,7 +59,7 @@ Level *level_new()
     return level;
 }
 
-Level *level_load(const char *filename)
+Level *level_load(const char *filename, int region)
 {
     const char *string;
     Level *level;
@@ -94,19 +95,19 @@ Level *level_load(const char *filename)
     string = sj_get_string_value(sj_object_get_value(levelJS,"bgImage"));
     if (string)
     {
-        level->bgImage = gf2d_sprite_load_image((char *)string);
+        gamelevel.bgImage = gf2d_sprite_load_image((char *)string);
     }
     string = sj_get_string_value(sj_object_get_value(levelJS,"tileSet"));
     if (string)
     {
-        sj_get_integer_value(sj_object_get_value(levelJS,"tileWidth"),&level->tileWidth);
-        sj_get_integer_value(sj_object_get_value(levelJS,"tileHeight"),&level->tileHeight);
-        sj_get_integer_value(sj_object_get_value(levelJS,"tileFPL"),&level->tileFPL);
-        level->tileSet = gf2d_sprite_load_all(
+        sj_get_integer_value(sj_object_get_value(levelJS,"tileWidth"),&gamelevel.tileWidth);
+        sj_get_integer_value(sj_object_get_value(levelJS,"tileHeight"),&gamelevel.tileHeight);
+        sj_get_integer_value(sj_object_get_value(levelJS,"tileFPL"),&gamelevel.tileFPL);
+        gamelevel.tileSet = gf2d_sprite_load_all(
             (char *)string,
-            level->tileWidth,
-            level->tileHeight,
-            level->tileFPL);
+            gamelevel.tileWidth,
+            gamelevel.tileHeight,
+            gamelevel.tileFPL);
     }
 
     levelMap = sj_object_get_value(levelJS,"tileMap");
@@ -121,16 +122,16 @@ Level *level_load(const char *filename)
     row = sj_array_get_nth(levelMap,0);
     columns = sj_array_get_count(row);
     count = rows * columns;
-    level->levelWidth = columns;
-    level->levelHeight = rows;
-    level->tileMap = (TileTypes*)gfc_allocate_array(sizeof(TileTypes),count);
-    if (!level->tileMap)
+    gamelevel.levelWidth = columns;
+    gamelevel.levelHeight = rows;
+    gamelevel.tileMap = (TileTypes*)gfc_allocate_array(sizeof(TileTypes),count);
+    if (!gamelevel.tileMap)
     {
         level_free(level);
         sj_free(json);
         return NULL;
     }
-    level->tileCount = count;
+    gamelevel.tileCount = count;
     
     tileindex = 0;
     slog("tilemap data:");
@@ -145,13 +146,13 @@ Level *level_load(const char *filename)
         }
         for (i = 0; i < columns; i++)
         {
-            sj_get_integer_value(sj_array_get_nth(row,i),&level->tileMap[tileindex]);
-            printf("%i,",level->tileMap[tileindex++]);
+            sj_get_integer_value(sj_array_get_nth(row,i),&gamelevel.tileMap[tileindex]);
+            printf("%i,",gamelevel.tileMap[tileindex++]);
         }
         printf("\n");
     }
-    slog("map width: %i",level->levelWidth);
-    slog("map height: %i",level->levelHeight);
+    slog("map width: %i",gamelevel.levelWidth);
+    slog("map height: %i",gamelevel.levelHeight);
     
     gamelevel.space = gf2d_space_new_full(
         3,
@@ -163,14 +164,14 @@ Level *level_load(const char *filename)
 
     Vector2D offset, drawPosition;
     offset = camera_get_offset();
-    for (i = 0; i < level->tileCount; i++)
+    for (i = 0; i < gamelevel.tileCount; i++)
     {
-        if (level->tileMap[i] == 0)continue;
-        drawPosition.x = ((i % level->levelWidth) * level->tileSet->frame_w);
-        drawPosition.y = ((i / level->levelWidth) * level->tileSet->frame_h);
+        if (gamelevel.tileMap[i] == 0)continue;
+        drawPosition.x = ((i % gamelevel.levelWidth) * gamelevel.tileSet->frame_w);
+        drawPosition.y = ((i / gamelevel.levelWidth) * gamelevel.tileSet->frame_h);
         drawPosition.x += offset.x;
         drawPosition.y += offset.y;
-        gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h));
+        gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, gamelevel.tileSet->frame_w, gamelevel.tileSet->frame_h));
     }
     //gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_edge(100, 200, 255, 360)); //for slope
 
@@ -295,33 +296,39 @@ Level *level_load(const char *filename)
 
             tile_spawn(vector2d(positionX, positionY));
         }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "door") == 0) {
 
+            door_spawn(vector2d(positionX, positionY));
+        }
     }
     
-    level->max_level = 8;
+    gamelevel.max_level = 8;
     
-    level->level_list = (Room*)gfc_allocate_array(sizeof(Room), level->max_level);
+    gamelevel.level_list = (Room*)gfc_allocate_array(sizeof(Room), gamelevel.max_level);
 
     float roomoffset = 768.0;
     int numOfLevel = 8;
-    for (int i = 0; i < level->max_level; i++) {
-        //if (level->level_list[i]._inuse)continue;// someone else is using this one
-        memset(&level->level_list[i], 0, sizeof(Room));
-        level->level_list[i]._inuse = 1;
+    for (int i = 0; i < gamelevel.max_level; i++) {
+        //if (gamelevel.level_list[i]._inuse)continue;// someone else is using this one
+        memset(&gamelevel.level_list[i], 0, sizeof(Room));
+        gamelevel.level_list[i]._inuse = 1;
         int levelpicker = rand() % 2;
-        if (levelpicker == 0) {
-            level->level_list[i] = *room_loadRoom("levels/Level1.json", roomoffset);
+        if (region == 0) {
+            if (levelpicker == 0) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/Level1.json", roomoffset);
+            }
+            else if (levelpicker == 1) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/Level2.json", roomoffset);
+            }
+            roomoffset += 768.0;
         }
-        else if (levelpicker == 1) {
-            level->level_list[i] = *room_loadRoom("levels/Level2.json", roomoffset);
-        }
-        roomoffset += 768.0;
     }
     
    // level_loadRoom(filename, 768);
 
     sj_free(json);
-    return level;
+    //gamelevel = *level;
+    return &gamelevel;
 }
 
 Level* level_loadRoom(const char* filename, float offsetForRoom)
@@ -361,14 +368,14 @@ Level* level_loadRoom(const char* filename, float offsetForRoom)
     string = sj_get_string_value(sj_object_get_value(levelJS, "tileSet"));
     if (string)
     {
-        sj_get_integer_value(sj_object_get_value(levelJS, "tileWidth"), &level->tileWidth);
-        sj_get_integer_value(sj_object_get_value(levelJS, "tileHeight"), &level->tileHeight);
-        sj_get_integer_value(sj_object_get_value(levelJS, "tileFPL"), &level->tileFPL);
-        level->tileSet = gf2d_sprite_load_all(
+        sj_get_integer_value(sj_object_get_value(levelJS, "tileWidth"), &gamelevel.tileWidth);
+        sj_get_integer_value(sj_object_get_value(levelJS, "tileHeight"), &gamelevel.tileHeight);
+        sj_get_integer_value(sj_object_get_value(levelJS, "tileFPL"), &gamelevel.tileFPL);
+        gamelevel.tileSet = gf2d_sprite_load_all(
             (char*)string,
-            level->tileWidth,
-            level->tileHeight,
-            level->tileFPL);
+            gamelevel.tileWidth,
+            gamelevel.tileHeight,
+            gamelevel.tileFPL);
     }
 
     levelMap = sj_object_get_value(levelJS, "tileMap");
@@ -383,16 +390,16 @@ Level* level_loadRoom(const char* filename, float offsetForRoom)
     row = sj_array_get_nth(levelMap, 0);
     columns = sj_array_get_count(row);
     count = rows * columns;
-    level->levelWidth = columns;
-    level->levelHeight = rows;
-    level->tileMap = (TileTypes*)gfc_allocate_array(sizeof(TileTypes), count);
-    if (!level->tileMap)
+    gamelevel.levelWidth = columns;
+    gamelevel.levelHeight = rows;
+    gamelevel.tileMap = (TileTypes*)gfc_allocate_array(sizeof(TileTypes), count);
+    if (!gamelevel.tileMap)
     {
         level_free(level);
         sj_free(json);
         return NULL;
     }
-    level->tileCount = count;
+    gamelevel.tileCount = count;
 
     tileindex = 0;
     slog("tilemap data:");
@@ -407,26 +414,26 @@ Level* level_loadRoom(const char* filename, float offsetForRoom)
         }
         for (i = 0; i < columns; i++)
         {
-            sj_get_integer_value(sj_array_get_nth(row, i), &level->tileMap[tileindex]);
-            printf("%i,", level->tileMap[tileindex++]);
+            sj_get_integer_value(sj_array_get_nth(row, i), &gamelevel.tileMap[tileindex]);
+            printf("%i,", gamelevel.tileMap[tileindex++]);
         }
         printf("\n");
     }
-    slog("map width: %i", level->levelWidth);
-    slog("map height: %i", level->levelHeight);
+    slog("map width: %i", gamelevel.levelWidth);
+    slog("map height: %i", gamelevel.levelHeight);
 
-    level->leveloffset = offsetForRoom;
+    gamelevel.leveloffset = offsetForRoom;
 
     Vector2D offset, drawPosition;
     offset = camera_get_offset();
-    for (i = 0; i < level->tileCount; i++)
+    for (i = 0; i < gamelevel.tileCount; i++)
     {
-        if (level->tileMap[i] == 0)continue;
-        drawPosition.x = ((i % level->levelWidth) * level->tileSet->frame_w);
-        drawPosition.y = ((i / level->levelWidth) * level->tileSet->frame_h);
-        drawPosition.x += offset.x + level->leveloffset;
+        if (gamelevel.tileMap[i] == 0)continue;
+        drawPosition.x = ((i % gamelevel.levelWidth) * gamelevel.tileSet->frame_w);
+        drawPosition.y = ((i / gamelevel.levelWidth) * gamelevel.tileSet->frame_h);
+        drawPosition.x += offset.x + gamelevel.leveloffset;
         drawPosition.y += offset.y;
-        gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h));
+        gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_rect(drawPosition.x, drawPosition.y, gamelevel.tileSet->frame_w, gamelevel.tileSet->frame_h));
     }
     //gf2d_space_add_static_shape(gamelevel.space, gf2d_shape_edge(100, 200, 255, 360)); //for slope
 
@@ -564,13 +571,13 @@ void level_free(Level *level)
 {
     if (!level)return;// nothing to do
     
-    if (level->tileMap != NULL)
+    if (gamelevel.tileMap != NULL)
     {
-        free(level->tileSet);
-        level->tileMap = NULL;
+        free(gamelevel.tileSet);
+        gamelevel.tileMap = NULL;
     }
-    gf2d_sprite_free(level->bgImage);
-    gf2d_sprite_free(level->tileSet);
+    gf2d_sprite_free(gamelevel.bgImage);
+    gf2d_sprite_free(gamelevel.tileSet);
     
     free(level);
 }
@@ -586,33 +593,33 @@ void level_draw(Level *level)
         return;
     }
     // draw the background first
-    if (level->bgImage) {
-        gf2d_sprite_draw_image(level->bgImage, vector2d(0, 0));
+    if (gamelevel.bgImage) {
+        gf2d_sprite_draw_image(gamelevel.bgImage, vector2d(0, 0));
     }
     //then draw the tiles
     
-    if (!level->tileMap)
+    if (!gamelevel.tileMap)
     {
         slog("not tiles loaded for the level, cannot draw it");
         return;
     }
     offset = camera_get_offset();
-    for (i = 0; i < level->tileCount; i++)
+    for (i = 0; i < gamelevel.tileCount; i++)
     {
-        if (level->tileMap[i] == 0)continue;
-        drawPosition.x = ((i % level->levelWidth) * level->tileSet->frame_w);
-        drawPosition.y = ((i / level->levelWidth) * level->tileSet->frame_h);
-        if (level->leveloffset) {
-            if (!camera_rect_on_screen(gfc_sdl_rect(drawPosition.x + level->leveloffset, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h)))
+        if (gamelevel.tileMap[i] == 0)continue;
+        drawPosition.x = ((i % gamelevel.levelWidth) * gamelevel.tileSet->frame_w);
+        drawPosition.y = ((i / gamelevel.levelWidth) * gamelevel.tileSet->frame_h);
+        if (gamelevel.leveloffset) {
+            if (!camera_rect_on_screen(gfc_sdl_rect(drawPosition.x + gamelevel.leveloffset, drawPosition.y, gamelevel.tileSet->frame_w, gamelevel.tileSet->frame_h)))
             {
                 //tile is off camera, skip
                 continue;
             }
-            drawPosition.x += offset.x + level->leveloffset;
+            drawPosition.x += offset.x + gamelevel.leveloffset;
             drawPosition.y += offset.y;
         }
         else {
-            if (!camera_rect_on_screen(gfc_sdl_rect(drawPosition.x, drawPosition.y, level->tileSet->frame_w, level->tileSet->frame_h)))
+            if (!camera_rect_on_screen(gfc_sdl_rect(drawPosition.x, drawPosition.y, gamelevel.tileSet->frame_w, gamelevel.tileSet->frame_h)))
             {
                 //tile is off camera, skip
                 continue;
@@ -621,27 +628,27 @@ void level_draw(Level *level)
             drawPosition.y += offset.y;
         }
         gf2d_sprite_draw(
-            level->tileSet,
+            gamelevel.tileSet,
             drawPosition,
             NULL,
             NULL,
             NULL,
             NULL,
             NULL,
-            level->tileMap[i] - 1);
+            gamelevel.tileMap[i] - 1);
         
         //if (gamelevel.space)gf2d_space_draw(gamelevel.space, vector2d(0,0));
     }
     int t;
-    if (level->level_list == NULL)
+    if (gamelevel.level_list == NULL)
     {
         slog("room system does not exist");
         return;
     }
-    for (t = 0; t < level->max_level; t++)
+    for (t = 0; t < gamelevel.max_level; t++)
     {
-        //if (level->level_list[t]._inuse == 0)continue;
-        room_draw(&level->level_list[t]);
+        //if (gamelevel.level_list[t]._inuse == 0)continue;
+        room_draw(&gamelevel.level_list[t]);
     }
 
 }
@@ -653,13 +660,13 @@ void level_update(Level* level)
     if (!level)return;
     camera = camera_get_rect();
     //snap camera to the level bounds
-    if ((camera.x + camera.w) > (int)level->levelSize.x)
+    if ((camera.x + camera.w) > (int)gamelevel.levelSize.x)
     {
-        camera.x = level->levelSize.x - camera.w;
+        camera.x = gamelevel.levelSize.x - camera.w;
     }
-    if ((camera.y + camera.h) > (int)level->levelSize.y)
+    if ((camera.y + camera.h) > (int)gamelevel.levelSize.y)
     {
-        camera.y = level->levelSize.y - camera.h;
+        camera.y = gamelevel.levelSize.y - camera.h;
     }
     if (camera.x < 0)camera.x = 0;
     if (camera.y < 0)camera.y = 0;

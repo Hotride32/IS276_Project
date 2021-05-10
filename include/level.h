@@ -51,7 +51,7 @@ void level_clear();
  * @param filename the file to load
  * @return NULL on error (See the logs) a loaded level otherwise
  */
-Level *level_load(const char *filename);
+Level *level_load(const char *filename,int region);
 
 Level* level_loadRoom(const char* filename, float offsetForRoom);
 

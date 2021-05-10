@@ -90,8 +90,8 @@ Entity *player_spawn(Vector2D position, const char* filename)
 
     sj_get_float_value(sj_object_get_value(json, "health"), &ent->health);
     sj_get_float_value(sj_object_get_value(json, "maxHealth"), &ent->maxHealth);
-    sj_get_float_value(sj_object_get_value(json, "position_x"), &ent->position.x);
-    sj_get_float_value(sj_object_get_value(json, "position_y"), &ent->position.y);
+    sj_get_float_value(sj_object_get_value(json, "position_x"), &ent->spawnPos.x);
+    sj_get_float_value(sj_object_get_value(json, "position_y"), &ent->spawnPos.y);
     sj_get_float_value(sj_object_get_value(json, "MP"), &ent->magicPt);
     sj_get_float_value(sj_object_get_value(json, "maxMP"), &ent->maxMagicPt);
     sj_get_float_value(sj_object_get_value(json, "str"), &ent->str);
@@ -111,7 +111,7 @@ Entity *player_spawn(Vector2D position, const char* filename)
     //ent->knifeCount = 0;
     //ent->bombCount = 0;
 
-    //vector2d_copy(ent->position,position);
+    vector2d_copy(ent->position,position);
     ent->frameAnimStart = 0;
     ent->frame = 0;
     ent->frameRate = 0.1;

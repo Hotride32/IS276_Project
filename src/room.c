@@ -531,6 +531,10 @@ Room* room_loadRoom(const char* filename, float offsetForRoom)
 
             tile_spawn(vector2d(positionX, positionY));
         }
+        else if (strcmp(sj_get_string_value(sj_object_get_value(item, "name")), "door") == 0) {
+
+            door_spawn(vector2d(positionX, positionY));
+        }
 
     }
 
@@ -572,7 +576,7 @@ void room_draw(Room *room)
     
     if (!room->tileMap)
     {
-        slog("not tiles loaded for the room, cannot draw it");
+        //slog("not tiles loaded for the room, cannot draw it");
         return;
     }
     offset = camera_get_offset();
