@@ -61,10 +61,10 @@ Entity *tile_spawn(Vector2D position)
    // ent->think = tile_think;
     ent->rotation.x = 64;
     ent->rotation.y = 64;
-    ent->shape = gf2d_shape_rect(0, 0, 32, 32);
+    ent->shape = gf2d_shape_rect(position.x, position.y, 32, 32);
     
-    Level game = level_get();
-    gf2d_space_add_static_shape(game.space, ent->shape);
+    //Level game = level_get();
+    gf2d_space_add_static_shape(level_get_space(), ent->shape);
     /*
     gf2d_body_set(
         &ent->body,

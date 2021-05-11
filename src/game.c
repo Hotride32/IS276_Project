@@ -38,6 +38,7 @@ static int changer = 1;
 static Window* _quit = NULL;
 static Window* edit = NULL;
 static Window* mainWin = NULL;
+static Window* example = NULL;
 static Level* level = NULL;
 //static Level* level2 = NULL;
 static Entity* player = NULL;
@@ -55,7 +56,7 @@ void onOK(void* data)
 {
     mainWin = NULL;
     changer = 0;
-    level = level_load("levels/Level1.json",0);
+    level = level_load("levels/region1/Level1.json",1);
     //level2 = level_loadRoom("levels/Level1.json",768.0);
     player = player_spawn(vector2d(100, 439), "levels/player.json");
 }
@@ -65,17 +66,35 @@ void onOK2(void* data) {
     player = NULL;
     gf2d_entity_free_all();
     camera_set_position(vector2d(0, 0));
-    level = level_load("levels/Level1.json",1);
+    level = level_load("levels/Level1.json",0);
     edit = NULL;
     changer = 2;
     //player = player_spawn(vector2d(100, 435), "levels/player.json");
 
 }
+void onOK3(void* data) {
+
+    level = NULL;
+    player = NULL;
+    gf2d_entity_free_all();
+    camera_set_position(vector2d(0, 0));
+    level = level_load("levels/exampleLevel.json", 0);
+    example = NULL;
+    //changer = 2;
+    player = player_spawn(vector2d(100, 435), "levels/player.json");
+
+}
+
 void onCancel3(void* data)
 {
-    //edit = NULL;
-    changer = 1;
-    mainWin = window_yes_no_level("Choose Level", onOK, onCancel2, NULL, NULL);
+    if (edit != NULL) {
+        edit = NULL;
+    }
+    if (example != NULL) {
+        example = NULL;
+    }
+    //changer = 1;
+    //mainWin = window_yes_no_level("Choose Level", onOK, onCancel2, NULL, NULL);
 }
 void onExit(void* data)
 {
@@ -453,6 +472,12 @@ int main(int argc, char * argv[])
             //mainWin = NULL;
             edit = window_yes_no("Open Editor?", onOK2, onCancel3, NULL, NULL);
           
+        }
+        if ((keys[SDL_SCANCODE_C]) && (_quit == NULL) && (example == NULL) && (mainWin == NULL) && (changer != 2))
+        {
+            //mainWin = NULL;
+            example = window_yes_no("Load Example Level?", onOK3, onCancel3, NULL, NULL);
+
         }
 
         /*

@@ -25,8 +25,8 @@
             [1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         ]
 		"spawn" : [
-		  {"name":"bomb","position_x":"-180.000000","position_y":"-260.000000"}
-		  {"name":"door","position_x":"577.000000","position_y":"421.000000"}
+		  {"name":"tile","position_x":"-180.000000","position_y":"-260.000000"},
+		  {"name":"door","position_x":"577.000000","position_y":"450.000000"}
 		
 		]
     }

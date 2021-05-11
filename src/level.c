@@ -302,28 +302,68 @@ Level *level_load(const char *filename, int region)
         }
     }
     
-    gamelevel.max_level = 8;
+    gamelevel.max_level =5;
     
     gamelevel.level_list = (Room*)gfc_allocate_array(sizeof(Room), gamelevel.max_level);
 
     float roomoffset = 768.0;
-    int numOfLevel = 8;
+    int numOfLevel = 5;
     for (int i = 0; i < gamelevel.max_level; i++) {
         //if (gamelevel.level_list[i]._inuse)continue;// someone else is using this one
         memset(&gamelevel.level_list[i], 0, sizeof(Room));
         gamelevel.level_list[i]._inuse = 1;
-        int levelpicker = rand() % 2;
-        if (region == 0) {
+        int levelpicker = rand() % 3;
+        if (region == 1) {
             if (levelpicker == 0) {
-                gamelevel.level_list[i] = *room_loadRoom("levels/Level1.json", roomoffset);
+                gamelevel.level_list[i] = *room_loadRoom("levels/region1/Level2.json", roomoffset);
             }
             else if (levelpicker == 1) {
-                gamelevel.level_list[i] = *room_loadRoom("levels/Level2.json", roomoffset);
+                gamelevel.level_list[i] = *room_loadRoom("levels/region1/Level3.json", roomoffset);
+            }
+            else if (levelpicker == 2) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/region1/Level4.json", roomoffset);
+            }
+            roomoffset += 768.0;
+        }
+        else if (region == 2) {
+            if (levelpicker == 0) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/region2/Level2.json", roomoffset);
+            }
+            else if (levelpicker == 1) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/region2/Level3.json", roomoffset);
+            }
+            else if (levelpicker == 2) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/region2/Level4.json", roomoffset);
+            }
+            roomoffset += 768.0;
+        }
+        else if (region == 3) {
+            if (levelpicker == 0) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/region3/Level2.json", roomoffset);
+            }
+            else if (levelpicker == 1) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/region3/Level3.json", roomoffset);
+            }
+            else if (levelpicker == 2) {
+                gamelevel.level_list[i] = *room_loadRoom("levels/region3/Level4.json", roomoffset);
             }
             roomoffset += 768.0;
         }
     }
-    
+
+    if (region == 1) {
+        door_spawn(vector2d(roomoffset-32.0, 450.0));
+    }
+    if (region == 2) {
+        door2_spawn(vector2d(roomoffset - 32.0, 450.0));
+    }
+    if (region == 3) {
+        door3_spawn(vector2d(roomoffset - 32.0, 450.0));
+    }
+    if (region == 4) {
+        door4_spawn(vector2d(roomoffset - 32.0, 450.0));
+    }
+
    // level_loadRoom(filename, 768);
 
     sj_free(json);

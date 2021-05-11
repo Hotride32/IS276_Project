@@ -6,4 +6,9 @@
 
 Entity *door_spawn(Vector2D position);
 
+Entity* door2_spawn(Vector2D position);
+
+Entity* door3_spawn(Vector2D position);
+
+Entity* door4_spawn(Vector2D position);
 #endif
