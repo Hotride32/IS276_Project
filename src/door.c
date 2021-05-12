@@ -405,8 +405,9 @@ int  door_damage(Entity *self,int amount, Entity *source)
     gf2d_actor_set_action(&self->actor,"die");
     self->body.cliplayer = 0;
     self->state = ES_Dying;
-    return 0;
     */
+    return 0;
+    
 }
 
 void door_die(Entity *self)

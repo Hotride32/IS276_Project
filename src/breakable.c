@@ -212,6 +212,7 @@ int  breakable_damage(Entity *self,int amount, Entity *source)
 {
     slog("CRUNCH");
     self->health -= amount;
+    return amount;
     /*
     if (self->state != ES_Idle)return 0;
     // check if maybe we are locked

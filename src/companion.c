@@ -439,7 +439,7 @@ int  companion_touch(Entity *self,Entity *other)
 
 int  companion_damage(Entity *self,int amount, Entity *source)
 {
-    
+    return 0;
 }
 
 int companion_player_sight_check(Entity *self)

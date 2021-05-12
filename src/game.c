@@ -453,6 +453,9 @@ int main(int argc, char * argv[])
             }
         }
 
+        gfc_line_sprintf(player_text, "Rendering at %f FPS", gf2d_graphics_get_frames_per_second());
+        gf2d_font_draw_line_tag(player_text, FT_H1, gfc_color8(255, 255, 255, 255), vector2d(1000, 32));
+
         gf2d_windows_draw_all();
         gf2d_mouse_draw();
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame

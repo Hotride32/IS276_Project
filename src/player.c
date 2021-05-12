@@ -461,6 +461,7 @@ int  player_damage(Entity* self, int amount, Entity* source)
     if (amount - self->def > 0) {
         self->health -= (amount - self->def);
     }
+    return (amount - self->def);
 }
 
 

@@ -2,6 +2,7 @@
 #include "level.h"
 #include "player.h"
 #include "simple_logger.h"
+#include "dagger.h"
 //#include "particle_effects.h"
 #include "entity.h"
 

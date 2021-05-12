@@ -48,3 +48,4 @@ Controls:
  
  
  To Access the Editor load the level using the menu and then press e and a pop-up should show.
+ While in Level or Editor press m to exit.
