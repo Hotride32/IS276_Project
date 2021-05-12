@@ -45,3 +45,6 @@ Controls:
  - I-> Fireball Spell (cost 10 MP)
  - O-> Barrier Spell (cost 25 MP)
  - P-> Beam Spell (cost 100 MP)
+ 
+ 
+ To Access the Editor load the level using the menu and then press e and a pop-up should show.
